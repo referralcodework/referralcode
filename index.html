@@ -32,7 +32,7 @@
         .heading { font-family: 'Space Grotesk', sans-serif; }
 
         .logo-frame {
-            width: 240px; height: 240px;
+            width: 220px; height: 220px;
             background: linear-gradient(145deg, #22c55e, #15803d);
             border-radius: 9999px;
             padding: 14px;
@@ -42,7 +42,7 @@
             overflow: hidden;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        @media (min-width: 640px) { .logo-frame { width: 280px; height: 280px; } }
+        @media (min-width: 480px) { .logo-frame { width: 260px; height: 260px; } }
         @media (min-width: 1024px) { .logo-frame { width: 380px; height: 380px; padding: 18px; } }
 
         .logo-frame img {
@@ -61,6 +61,9 @@
             box-shadow: 0 25px 50px -12px rgb(34 197 94 / 0.25);
             border-color: #22c55e;
         }
+
+        /* Force no horizontal overflow */
+        .max-w-screen-2xl { max-width: 100% !important; }
     </style>
 </head>
 <body class="bg-white text-gray-900 overflow-x-hidden">
@@ -69,8 +72,8 @@
     <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-b border-gray-200 shadow-sm">
         <div class="max-w-screen-2xl mx-auto px-5 py-4 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <img src="logo.png" alt="Referral Code Logo" class="w-9 h-9">
-                <div class="heading text-2xl font-semibold tracking-tighter">
+                <img src="logo.png" alt="Referral Code Logo" class="w-9 h-9 flex-shrink-0">
+                <div class="heading text-xl sm:text-2xl font-semibold tracking-tighter">
                     REFERRAL <span class="text-[#22c55e]">CODE</span>
                 </div>
             </div>
@@ -111,19 +114,19 @@
     </nav>
 
     <!-- HERO -->
-    <header class="min-h-screen flex items-center bg-gradient-to-br from-white via-gray-50 to-white pt-16 pb-12">
-        <div class="max-w-screen-2xl mx-auto px-5 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+    <header class="min-h-screen flex items-center bg-gradient-to-br from-white via-gray-50 to-white pt-16">
+        <div class="max-w-screen-2xl mx-auto px-5 grid lg:grid-cols-2 gap-10 items-center">
             <div class="space-y-8">
                 <div class="inline-flex items-center gap-3 bg-green-100 text-green-700 rounded-full px-5 py-2.5 text-sm font-medium">
                     <div class="w-2 h-2 bg-green-600 rounded-full animate-pulse"></div>
                     COMMUNITY DRIVEN • SOLANA
                 </div>
                 
-                <h1 class="heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold leading-none tracking-tighter text-gray-900">
+                <h1 class="heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-none tracking-tighter text-gray-900">
                     MAKE REFERRALS<br><span class="text-[#22c55e]">GREAT AGAIN</span>
                 </h1>
                 
-                <p class="text-lg sm:text-xl md:text-2xl text-gray-600 max-w-lg">
+                <p class="text-lg sm:text-xl text-gray-600 max-w-lg">
                     The ultimate referral meme coin on Solana.<br>
                     Every share, every mention, every referral fuels the next wave.
                 </p>
@@ -148,7 +151,7 @@
                 </a>
             </div>
             
-            <div class="flex justify-center lg:justify-end pt-8 lg:pt-0">
+            <div class="flex justify-center lg:justify-end">
                 <div class="logo-frame">
                     <img src="logo.png" alt="Referral Code Logo">
                 </div>
@@ -158,7 +161,7 @@
 
     <!-- STORY -->
     <section id="story" class="py-20 lg:py-28 bg-white">
-        <div class="max-w-screen-2xl mx-auto px-6">
+        <div class="max-w-screen-2xl mx-auto px-5">
             <div class="grid lg:grid-cols-12 gap-12 items-center">
                 <div class="lg:col-span-7">
                     <h2 class="heading text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tighter mb-8">
@@ -166,12 +169,12 @@
                         Owned by the community.<br>
                         Powered by referrals.
                     </h2>
-                    <div class="text-lg sm:text-2xl text-gray-600 max-w-2xl">
-                        <p>The original developer stepped away. The community took full ownership and turned $REFERRAL into a pure movement focused on virality and referrals.</p>
+                    <div class="text-lg sm:text-2xl text-gray-600">
+                        The original developer stepped away. The community took full ownership and turned $REFERRAL into a pure movement focused on virality and referrals.
                     </div>
                 </div>
                 <div class="lg:col-span-5">
-                    <div class="flex gap-12 justify-center lg:justify-start">
+                    <div class="flex gap-10 justify-center lg:justify-start">
                         <div class="text-center">
                             <div class="text-6xl font-black text-[#22c55e]">100%</div>
                             <div class="uppercase text-sm tracking-widest mt-2">Community Owned</div>
@@ -188,7 +191,7 @@
 
     <!-- WHY BULLISH -->
     <section id="why-bullish" class="py-20 lg:py-28 bg-gray-50">
-        <div class="max-w-screen-2xl mx-auto px-6">
+        <div class="max-w-screen-2xl mx-auto px-5">
             <div class="text-center mb-12">
                 <h2 class="heading text-4xl sm:text-5xl font-bold text-gray-900">Why $REFERRAL is Bullish</h2>
             </div>
@@ -206,7 +209,7 @@
                 <div class="hover-card bg-white border border-gray-200 rounded-3xl p-8">
                     <div class="text-4xl mb-6 text-[#22c55e]"><i class="fa-solid fa-people-group"></i></div>
                     <h3 class="font-semibold text-2xl mb-3">Herd Momentum</h3>
-                    <p class="text-gray-600">Solana memes run on FOMO. $REFERRAL taps perfectly into this: when people see others winning with referrals, they join fast.</p>
+                    <p class="text-gray-600">Solana memes run on FOMO. $REFERRAL taps perfectly into this.</p>
                 </div>
             </div>
         </div>
@@ -214,21 +217,19 @@
 
     <!-- LIVE STATS -->
     <section id="live-stats" class="py-20 lg:py-28 bg-white">
-        <div class="max-w-screen-2xl mx-auto px-6">
+        <div class="max-w-screen-2xl mx-auto px-5">
             <div class="text-center mb-12">
                 <h2 class="heading text-4xl sm:text-5xl font-bold text-gray-900">Live Market Stats</h2>
-                <p class="text-xl text-gray-600">Real-time from Solana blockchain</p>
             </div>
-            <div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto" id="stats-container"></div>
+            <div class="grid md:grid-cols-3 gap-6" id="stats-container"></div>
         </div>
     </section>
 
     <!-- HOW TO BUY -->
     <section id="howtobuy" class="py-20 lg:py-28 bg-gray-50">
-        <div class="max-w-screen-2xl mx-auto px-6">
+        <div class="max-w-screen-2xl mx-auto px-5">
             <div class="text-center mb-12">
                 <h2 class="heading text-4xl sm:text-5xl font-bold text-gray-900">How to Buy $REFERRAL</h2>
-                <p class="text-xl text-gray-600">Complete step-by-step guide</p>
             </div>
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div class="hover-card bg-white border border-gray-200 rounded-3xl p-8">
@@ -274,7 +275,7 @@
 
     <!-- MEMES -->
     <section id="memes" class="py-20 lg:py-28 bg-white">
-        <div class="max-w-screen-2xl mx-auto px-6">
+        <div class="max-w-screen-2xl mx-auto px-5">
             <h2 class="heading text-4xl sm:text-5xl font-semibold text-center mb-12 text-gray-900">Community Memes & Jokes</h2>
             <div class="grid md:grid-cols-3 gap-6">
                 <div class="hover-card bg-white border border-gray-200 rounded-3xl p-8">
@@ -316,10 +317,7 @@
         // Mobile Menu
         const menuBtn = document.getElementById('mobile-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
-        
-        menuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
+        menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
 
         async function fetchLiveStats() {
             const container = document.getElementById('stats-container');
