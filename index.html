@@ -204,7 +204,7 @@
         </div>
     </section>
 
-    <!-- LIVE STATS (now includes Live Referrals) -->
+    <!-- LIVE STATS -->
     <section id="live-stats" class="py-20 lg:py-28 bg-white">
         <div class="max-w-screen-2xl mx-auto px-5">
             <div class="text-center mb-12">
@@ -308,7 +308,6 @@
         const mobileMenu = document.getElementById('mobile-menu');
         menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
 
-        // DexScreener + Live Referrals
         async function fetchLiveStats() {
             const container = document.getElementById('stats-container');
             try {
@@ -343,20 +342,24 @@
                     </div>
                 `;
             } catch (e) {
-                console.error("DexScreener fetch failed");
+                console.error("DexScreener fetch failed", e);
             }
         }
 
-        // Helius Live Referrals Count (exactly as you requested)
+        // Helius Live Referrals with CORS proxy
         async function fetchReferralCount() {
             const countEl = document.getElementById('referral-count');
             if (!countEl) return;
 
+            console.log("🔄 Starting Helius referral count...");
             countEl.textContent = 'Counting...';
 
             const mint = "CvmRz15WYyhLRskuUFfRe6EybPjQdUqFA8URVcmSpump";
             const apiKey = "77ba4c04-45b3-46df-b1ec-59890f7f1ff2";
-            const url = `https://mainnet.helius-rpc.com/?api-key=${apiKey}`;
+            const heliusUrl = `https://mainnet.helius-rpc.com/?api-key=${apiKey}`;
+
+            // Free CORS proxy to bypass browser restrictions
+            const proxyUrl = `https://corsproxy.io/?` + encodeURIComponent(heliusUrl);
 
             let page = 1;
             let totalReferrals = 0;
@@ -364,7 +367,9 @@
 
             try {
                 while (true) {
-                    const res = await fetch(url, {
+                    console.log(`📄 Fetching page ${page}...`);
+                    
+                    const res = await fetch(proxyUrl, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
@@ -375,8 +380,14 @@
                         })
                     });
 
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
                     const data = await res.json();
-                    const accounts = data.result?.tokenAccounts || data.result?.value || [];
+                    console.log("📦 Helius response for page", page, ":", data);
+
+                    const accounts = data.result?.token_accounts || [];
+
+                    console.log(`✅ Page ${page} returned ${accounts.length} accounts`);
 
                     if (accounts.length === 0) break;
 
@@ -391,14 +402,15 @@
                     page++;
                 }
 
+                console.log(`🎉 Final referral count: ${totalReferrals}`);
                 countEl.textContent = totalReferrals.toLocaleString();
             } catch (e) {
-                console.error("Helius RPC error:", e);
+                console.error("🚨 Helius RPC failed:", e);
                 countEl.textContent = "—";
+                countEl.style.color = "#ef4444";
             }
         }
 
-        // Start everything
         window.onload = () => {
             fetchLiveStats();
             fetchReferralCount();
