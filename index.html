@@ -1,1 +1,150 @@
-[I will put the full updated HTML here]
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="$REFERRAL - Referral Code | There's only 1 referral code. Make Referrals Great Again.">
+    <title>$REFERRAL • There's Only 1 Referral Code</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap');
+        body { font-family: 'Inter', system-ui, sans-serif; }
+        .heading-font { font-family: 'Space Grotesk', sans-serif; }
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.5); }
+            70% { box-shadow: 0 0 0 20px rgba(234, 179, 8, 0); }
+        }
+    </style>
+</head>
+<body class="bg-black text-white overflow-x-hidden">
+
+    <!-- NAVBAR -->
+    <nav class="fixed top-0 w-full bg-black/80 backdrop-blur-md z-50 border-b border-yellow-400/20">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <img src="logo.png" alt="Referral Code" class="h-9">
+                <span class="text-2xl font-bold tracking-tighter heading-font">$REFERRAL</span>
+            </div>
+            <div class="flex items-center gap-8">
+                <a href="#live" class="hover:text-yellow-400 transition">Live Stats</a>
+                <a href="#howtobuy" class="hover:text-yellow-400 transition">How to Buy</a>
+                <a href="https://x.com/referralcodesol" target="_blank" class="hover:text-yellow-400 transition"><i class="fab fa-x-twitter"></i></a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <header class="pt-24 pb-16 text-center px-6">
+        <h1 class="text-6xl md:text-7xl font-bold heading-font tracking-tighter mb-4">MAKE REFERRALS</h1>
+        <h1 class="text-6xl md:text-7xl font-bold heading-font tracking-tighter text-yellow-400 mb-8">GREAT AGAIN</h1>
+        <div class="max-w-2xl mx-auto">
+            <p class="text-xl text-gray-300">The only meme coin with a real referral code.</p>
+        </div>
+    </header>
+
+    <!-- ONLY 1 REFERRAL CODE SECTION -->
+    <section class="py-12 bg-gradient-to-b from-zinc-950 to-black border-b border-yellow-400/30">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <div class="inline-flex items-center gap-3 bg-yellow-400/10 border border-yellow-400/30 rounded-3xl px-8 py-4 mb-8">
+                <span class="text-4xl">🔑</span>
+                <h2 class="text-4xl md:text-5xl font-bold tracking-tighter text-yellow-400">THERE'S ONLY <span class="text-white">1</span> REFERRAL CODE</h2>
+            </div>
+            <p class="text-2xl text-gray-400 mb-8">And you're looking at it right now.</p>
+            
+            <div onclick="copyCA()" class="pulse cursor-pointer mx-auto max-w-2xl bg-zinc-900 border-2 border-yellow-400/60 hover:border-yellow-400 rounded-3xl p-8 font-mono text-lg break-all transition-all">
+                CvmRz15WYyhLRskuUFfRe6EybPjQdUqFA8URVcmSpump
+            </div>
+            
+            <div class="flex flex-wrap justify-center gap-4 mt-8">
+                <button onclick="copyCA()" class="bg-white text-black px-10 py-4 rounded-2xl font-bold text-lg hover:bg-yellow-300 transition flex items-center gap-2">
+                    📋 COPY THE ONLY REFERRAL CODE
+                </button>
+                <a href="https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=CvmRz15WYyhLRskuUFfRe6EybPjQdUqFA8URVcmSpump" target="_blank" class="border border-white/60 hover:border-yellow-400 px-10 py-4 rounded-2xl font-bold text-lg transition">
+                    BUY $REFERRAL →
+                </a>
+            </div>
+            
+            <p class="mt-10 text-gray-500">All you need is <span class="text-yellow-400 font-semibold">1 referral code</span>. No more. No less.</p>
+        </div>
+    </section>
+
+    <!-- LIVE REFERRALS + MARKET STATS -->
+    <section id="live" class="py-20 bg-white text-black">
+        <div class="max-w-5xl mx-auto px-6">
+            <h2 class="text-center text-4xl font-bold mb-12 heading-font">LIVE STATS</h2>
+            
+            <!-- Live Referrals -->
+            <div class="text-center mb-16">
+                <div class="inline-flex items-center gap-2 bg-green-100 text-green-700 px-5 py-2 rounded-full text-sm font-medium mb-4">
+                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    LIVE REFERRALS
+                </div>
+                <div id="referral-count" class="text-8xl font-bold font-mono text-gray-900 tabular-nums">0</div>
+                <p class="text-gray-600 mt-3">people who have the only referral code</p>
+            </div>
+
+            <!-- DexScreener stats will go here if you had existing code -->
+            <div id="dex-stats" class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center"></div>
+        </div>
+    </section>
+
+    <script>
+        // Copy CA
+        function copyCA() {
+            const ca = "CvmRz15WYyhLRskuUFfRe6EybPjQdUqFA8URVcmSpump";
+            navigator.clipboard.writeText(ca).then(() => {
+                alert("✅ Only Referral Code copied to clipboard!");
+            });
+        }
+
+        // Live Referrals Counter
+        const TOKEN_MINT = "CvmRz15WYyhLRskuUFfRe6EybPjQdUqFA8URVcmSpump";
+        const HELIUS_KEY = "77ba4c04-45b3-46df-b1ec-59890f7f1ff2";
+        const HELIUS_RPC = `https://mainnet.helius-rpc.com/?api-key=${HELIUS_KEY}`;
+
+        async function fetchReferralCount() {
+            const el = document.getElementById('referral-count');
+            let total = 0;
+            let page = 1;
+            let hasMore = true;
+
+            try {
+                while (hasMore) {
+                    const response = await fetch(HELIUS_RPC, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            jsonrpc: '2.0',
+                            id: 'referral-count',
+                            method: 'getTokenAccounts',
+                            params: {
+                                mint: TOKEN_MINT,
+                                limit: 1000,
+                                page: page
+                            }
+                        })
+                    });
+
+                    const data = await response.json();
+                    const accounts = data.result?.tokenAccounts || [];
+                    
+                    const nonZero = accounts.filter(acc => acc.account.data.parsed.info.tokenAmount.uiAmount > 0).length;
+                    total += nonZero;
+                    hasMore = accounts.length === 1000;
+                    page++;
+                }
+                el.textContent = total.toLocaleString();
+            } catch (err) {
+                console.error(err);
+                el.textContent = '—';
+            }
+        }
+
+        // Initialize
+        fetchReferralCount();
+        setInterval(fetchReferralCount, 45000);
+    </script>
+</body>
+</html>
