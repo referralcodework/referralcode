@@ -6,68 +6,71 @@
     <meta name="description" content="Referral Code ($REFERRAL) — Community-owned Solana meme coin. Make Referrals Great Again.">
     <meta name="theme-color" content="#22c55e">
     <title>$REFERRAL • Referral Code | Make Referrals Great Again</title>
-   
+    
     <!-- Favicon -->
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
     <!-- Social Preview -->
     <meta property="og:title" content="$REFERRAL • Make Referrals Great Again">
-    <meta property="og:description" content="Community-owned Solana meme coin. Make Referrals Great Again.">
+    <meta property="og:description" content="Original dev rugged it. The community took it back. Pure vibes. Pure gains.">
     <meta property="og:image" content="preview.jpg">
     <meta property="og:url" content="https://referralcode.work">
     <meta property="og:type" content="website">
+
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="$REFERRAL • Make Referrals Great Again">
-    <meta name="twitter:description" content="Community-owned Solana meme coin. Make Referrals Great Again.">
+    <meta name="twitter:description" content="Original dev rugged it. The community took it back. Pure vibes. Pure gains.">
     <meta name="twitter:image" content="preview.jpg">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap');
-       
+        
         body { font-family: 'Inter', system-ui, sans-serif; }
         .heading { font-family: 'Space Grotesk', sans-serif; }
+
         .logo-frame {
-            width: 220px; height: 220px;
+            width: 280px; height: 280px;
             background: linear-gradient(145deg, #22c55e, #15803d);
             border-radius: 9999px;
-            padding: 14px;
+            padding: 12px;
             box-shadow: 0 25px 50px -12px rgb(34 197 94 / 0.4),
-                        inset 0 10px 20px rgba(255,255,255,0.5),
+                        inset 0 10px 20px rgba(255,255,255,0.4),
                         inset 0 -10px 20px rgba(0,0,0,0.3);
-            overflow: hidden;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        @media (min-width: 480px) { .logo-frame { width: 260px; height: 260px; } }
-        @media (min-width: 1024px) { .logo-frame { width: 380px; height: 380px; padding: 18px; } }
-        .logo-frame img {
-            width: 100%; height: 100%;
-            border-radius: 9999px;
-            object-fit: contain;
-            background: white;
-            padding: 8px;
+        @media (min-width: 1024px) {
+            .logo-frame { width: 380px; height: 380px; }
         }
+
         .hover-card {
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .hover-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 25px 50px -12px rgb(34 197 94 / 0.25);
+            transform: translateY(-12px) scale(1.03);
+            box-shadow: 0 30px 60px -15px rgb(34 197 94 / 0.25);
             border-color: #22c55e;
         }
+
+        .mobile-link { transition: all 0.2s; }
+        .mobile-link:hover { color: #22c55e; }
     </style>
 </head>
 <body class="bg-white text-gray-900 overflow-x-hidden">
+
     <!-- NAVBAR -->
     <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-b border-gray-200 shadow-sm">
-        <div class="max-w-screen-2xl mx-auto px-5 py-4 flex items-center justify-between">
+        <div class="max-w-screen-2xl mx-auto px-6 py-5 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <img src="logo.png" alt="Referral Code Logo" class="w-9 h-9 flex-shrink-0">
-                <div class="heading text-xl sm:text-2xl font-semibold tracking-tighter">
+                <img src="logo.png" alt="Logo" class="w-9 h-9">
+                <div class="heading text-2xl font-semibold tracking-tighter">
                     REFERRAL <span class="text-[#22c55e]">CODE</span>
                 </div>
             </div>
-           
+
+            <!-- Desktop Menu -->
             <div class="hidden md:flex items-center gap-8 text-sm font-medium">
                 <a href="#story" class="hover:text-[#22c55e]">STORY</a>
                 <a href="#why-bullish" class="hover:text-[#22c55e]">WHY BULLISH</a>
@@ -76,7 +79,7 @@
                 <a href="#memes" class="hover:text-[#22c55e]">MEMES</a>
                 <a href="https://dexscreener.com/solana/EUyunpwVybXKn6oXPqmf67HdoGrX8VSXQZRXkkBuRfBj" target="_blank" class="hover:text-[#22c55e]">CHART</a>
             </div>
-           
+
             <div class="flex items-center gap-3">
                 <a href="https://x.com/referralcodesol" target="_blank" class="p-3 hover:bg-gray-100 rounded-xl">
                     <i class="fa-brands fa-x-twitter"></i>
@@ -89,6 +92,7 @@
                 </button>
             </div>
         </div>
+
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
             <div class="flex flex-col px-6 py-8 space-y-6 text-lg font-medium">
@@ -103,46 +107,45 @@
     </nav>
 
     <!-- HERO -->
-    <header class="min-h-screen flex items-center bg-gradient-to-br from-white via-gray-50 to-white pt-16">
-        <div class="max-w-screen-2xl mx-auto px-5 grid lg:grid-cols-2 gap-10 items-center">
+    <header class="min-h-screen flex items-center bg-gradient-to-br from-white via-gray-50 to-white pt-20">
+        <div class="max-w-screen-2xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
             <div class="space-y-8">
                 <div class="inline-flex items-center gap-3 bg-green-100 text-green-700 rounded-full px-5 py-2.5 text-sm font-medium">
                     <div class="w-2 h-2 bg-green-600 rounded-full animate-pulse"></div>
-                    COMMUNITY DRIVEN • SOLANA
+                    COMMUNITY TAKEOVER • SOLANA
                 </div>
-               
-                <h1 class="heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-none tracking-tighter text-gray-900">
+                
+                <h1 class="heading text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold leading-none tracking-tighter">
                     MAKE REFERRALS<br><span class="text-[#22c55e]">GREAT AGAIN</span>
                 </h1>
-               
-                <p class="text-lg sm:text-xl text-gray-600 max-w-lg">
-                    The ultimate referral meme coin on Solana.<br>
-                    Every share, every mention, every referral fuels the next wave.
+                
+                <p class="text-xl sm:text-2xl text-gray-600 max-w-lg">
+                    Original dev rugged it.<br>The community took it back.
                 </p>
-               
+
                 <div class="bg-gray-100 border border-gray-300 rounded-3xl p-6">
                     <div onclick="copyCA()" class="flex items-center justify-between cursor-pointer group">
-                        <div class="font-mono text-sm sm:text-base text-gray-800 pr-4 break-all">
+                        <div class="font-mono text-base sm:text-lg text-gray-800 pr-4 break-all">
                             CvmRz15WYyhLRskuUFfRe6EybPjQdUqFA8URVcmSpump
                         </div>
                         <div class="text-[#22c55e] font-semibold text-sm uppercase tracking-widest group-hover:text-green-600 flex items-center gap-2">
                             <i class="fa-solid fa-copy"></i>
-                            COPY CA
+                            COPY
                         </div>
                     </div>
                 </div>
-               
-                <a href="https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=CvmRz15WYyhLRskuUFfRe6EybPjQdUqFA8URVcmSpump"
+
+                <a href="https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=CvmRz15WYyhLRskuUFfRe6EybPjQdUqFA8URVcmSpump" 
                    target="_blank"
                    class="inline-flex w-full sm:w-auto items-center justify-center gap-4 bg-[#22c55e] hover:bg-green-600 text-white text-xl font-semibold px-10 py-6 rounded-3xl">
                     BUY $REFERRAL NOW
                     <i class="fa-solid fa-arrow-right"></i>
                 </a>
             </div>
-           
-            <div class="flex justify-center lg:justify-end">
+            
+            <div class="flex justify-center lg:justify-end pt-8 lg:pt-0">
                 <div class="logo-frame">
-                    <img src="logo.png" alt="Referral Code Logo">
+                    <img src="logo.png" alt="Referral Code Logo" class="w-full h-full object-contain">
                 </div>
             </div>
         </div>
@@ -150,27 +153,26 @@
 
     <!-- STORY -->
     <section id="story" class="py-20 lg:py-28 bg-white">
-        <div class="max-w-screen-2xl mx-auto px-5">
+        <div class="max-w-screen-2xl mx-auto px-6">
             <div class="grid lg:grid-cols-12 gap-12 items-center">
                 <div class="lg:col-span-7">
                     <h2 class="heading text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tighter mb-8">
-                        Built by the community.<br>
-                        Owned by the community.<br>
-                        Powered by referrals.
+                        Launched and rugged.<br>
+                        <span class="text-[#22c55e]">Community stepped up.</span>
                     </h2>
-                    <div class="text-lg sm:text-xl text-gray-600 max-w-xl">
-                        The original developer stepped away. The community took full ownership and turned $REFERRAL into a pure movement focused on virality and referrals.
-                    </div>
+                    <p class="text-lg sm:text-2xl text-gray-600 max-w-2xl">
+                        A pure community meme coin on Solana. No team tokens. No presale. Just memes, referrals, and diamond hands.
+                    </p>
                 </div>
                 <div class="lg:col-span-5">
-                    <div class="flex flex-wrap gap-10 justify-center lg:justify-start">
+                    <div class="flex gap-12 justify-center lg:justify-start">
                         <div class="text-center">
-                            <div class="text-5xl sm:text-6xl font-black text-[#22c55e]">100%</div>
-                            <div class="uppercase text-xs sm:text-sm tracking-widest mt-2">Community Owned</div>
+                            <div class="text-6xl font-black text-[#22c55e]">100%</div>
+                            <div class="uppercase text-sm tracking-widest mt-2">Community Owned</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-5xl sm:text-6xl font-black text-gray-900">SOLANA</div>
-                            <div class="uppercase text-xs sm:text-sm tracking-widest mt-2">Fast & Cheap</div>
+                            <div class="text-6xl font-black text-gray-900">SOLANA</div>
+                            <div class="uppercase text-sm tracking-widest mt-2">Fast & Cheap</div>
                         </div>
                     </div>
                 </div>
@@ -180,7 +182,7 @@
 
     <!-- WHY BULLISH -->
     <section id="why-bullish" class="py-20 lg:py-28 bg-gray-50">
-        <div class="max-w-screen-2xl mx-auto px-5">
+        <div class="max-w-screen-2xl mx-auto px-6">
             <div class="text-center mb-12">
                 <h2 class="heading text-4xl sm:text-5xl font-bold text-gray-900">Why $REFERRAL is Bullish</h2>
             </div>
@@ -188,17 +190,17 @@
                 <div class="hover-card bg-white border border-gray-200 rounded-3xl p-8">
                     <div class="text-4xl mb-6 text-[#22c55e]"><i class="fa-solid fa-chart-line"></i></div>
                     <h3 class="font-semibold text-2xl mb-3">Algorithm Loves It</h3>
-                    <p class="text-gray-600">Every time someone types "referral code", the algorithm naturally pushes it. This creates real organic virality.</p>
+                    <p class="text-gray-600">Every time someone types "referral code", the algorithm pushes it naturally.</p>
                 </div>
                 <div class="hover-card bg-white border border-gray-200 rounded-3xl p-8">
                     <div class="text-4xl mb-6 text-[#22c55e]"><i class="fa-solid fa-share-nodes"></i></div>
                     <h3 class="font-semibold text-2xl mb-3">Best Marketing System</h3>
-                    <p class="text-gray-600">Referral marketing is statistically the most effective growth method.</p>
+                    <p class="text-gray-600">Referral marketing is the most effective growth method.</p>
                 </div>
                 <div class="hover-card bg-white border border-gray-200 rounded-3xl p-8">
                     <div class="text-4xl mb-6 text-[#22c55e]"><i class="fa-solid fa-people-group"></i></div>
                     <h3 class="font-semibold text-2xl mb-3">Herd Momentum</h3>
-                    <p class="text-gray-600">Solana memes run on FOMO. $REFERRAL taps perfectly into this.</p>
+                    <p class="text-gray-600">Perfect FOMO engine for Solana memes.</p>
                 </div>
             </div>
         </div>
@@ -206,56 +208,51 @@
 
     <!-- LIVE STATS -->
     <section id="live-stats" class="py-20 lg:py-28 bg-white">
-        <div class="max-w-screen-2xl mx-auto px-5">
+        <div class="max-w-screen-2xl mx-auto px-6">
             <div class="text-center mb-12">
                 <h2 class="heading text-4xl sm:text-5xl font-bold text-gray-900">Live Market Stats</h2>
             </div>
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6" id="stats-container"></div>
+            <div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto" id="stats-container"></div>
         </div>
     </section>
 
     <!-- HOW TO BUY -->
     <section id="howtobuy" class="py-20 lg:py-28 bg-gray-50">
-        <div class="max-w-screen-2xl mx-auto px-5">
+        <div class="max-w-screen-2xl mx-auto px-6">
             <div class="text-center mb-12">
                 <h2 class="heading text-4xl sm:text-5xl font-bold text-gray-900">How to Buy $REFERRAL</h2>
             </div>
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div class="hover-card bg-white border border-gray-200 rounded-3xl p-8">
                     <div class="text-5xl mb-6 text-[#22c55e]"><i class="fa-solid fa-wallet"></i></div>
-                    <h3 class="font-semibold text-2xl mb-4">Create a Solana Wallet</h3>
-                    <ul class="space-y-3 text-gray-600 text-[15px]">
-                        <li>• Download Phantom, Solflare or Backpack</li>
-                        <li>• Install on Chrome, iOS or Android</li>
-                        <li>• Backup your seed phrase securely</li>
+                    <h3 class="font-semibold text-xl mb-4">1. Create Wallet</h3>
+                    <ul class="space-y-2 text-gray-600 text-sm">
+                        <li>• Phantom, Solflare or Backpack</li>
+                        <li>• Backup your seed phrase</li>
                     </ul>
                 </div>
                 <div class="hover-card bg-white border border-gray-200 rounded-3xl p-8">
                     <div class="text-5xl mb-6 text-[#22c55e]"><i class="fa-solid fa-coins"></i></div>
-                    <h3 class="font-semibold text-2xl mb-4">Acquire SOL</h3>
-                    <ul class="space-y-3 text-gray-600 text-[15px]">
-                        <li>• Buy SOL on Binance, Coinbase, or Kraken</li>
-                        <li>• Withdraw to your wallet address</li>
-                        <li>• Keep extra for gas fees</li>
+                    <h3 class="font-semibold text-xl mb-4">2. Get SOL</h3>
+                    <ul class="space-y-2 text-gray-600 text-sm">
+                        <li>• Buy on exchange</li>
+                        <li>• Withdraw to wallet</li>
                     </ul>
                 </div>
                 <div class="hover-card bg-white border border-gray-200 rounded-3xl p-8">
                     <div class="text-5xl mb-6 text-[#22c55e]"><i class="fa-solid fa-arrow-right-arrow-left"></i></div>
-                    <h3 class="font-semibold text-2xl mb-4">Swap on Jupiter</h3>
-                    <ul class="space-y-3 text-gray-600 text-[15px]">
-                        <li>• Go to <a href="https://jup.ag" target="_blank" class="text-[#22c55e] hover:underline">jup.ag</a></li>
-                        <li>• Connect your wallet</li>
-                        <li>• Paste the contract address</li>
-                        <li>• Swap SOL for $REFERRAL</li>
+                    <h3 class="font-semibold text-xl mb-4">3. Swap on Jupiter</h3>
+                    <ul class="space-y-2 text-gray-600 text-sm">
+                        <li>• Go to jup.ag</li>
+                        <li>• Paste CA & swap</li>
                     </ul>
                 </div>
                 <div class="hover-card bg-white border border-gray-200 rounded-3xl p-8">
                     <div class="text-5xl mb-6 text-[#22c55e]"><i class="fa-solid fa-shield-halved"></i></div>
-                    <h3 class="font-semibold text-2xl mb-4">Secure & Enjoy</h3>
-                    <ul class="space-y-3 text-gray-600 text-[15px]">
-                        <li>• Never share your seed phrase</li>
-                        <li>• Add $REFERRAL to your wallet</li>
-                        <li>• Join Telegram & X for updates</li>
+                    <h3 class="font-semibold text-xl mb-4">4. Secure & Enjoy</h3>
+                    <ul class="space-y-2 text-gray-600 text-sm">
+                        <li>• Never share seed</li>
+                        <li>• Join community</li>
                     </ul>
                 </div>
             </div>
@@ -264,173 +261,102 @@
 
     <!-- MEMES -->
     <section id="memes" class="py-20 lg:py-28 bg-white">
-        <div class="max-w-screen-2xl mx-auto px-5">
-            <h2 class="heading text-4xl sm:text-5xl font-semibold text-center mb-12 text-gray-900">Community Memes & Jokes</h2>
+        <div class="max-w-screen-2xl mx-auto px-6">
+            <h2 class="heading text-4xl sm:text-5xl font-semibold text-center mb-12">Community Memes & Jokes</h2>
             <div class="grid md:grid-cols-3 gap-6">
                 <div class="hover-card bg-white border border-gray-200 rounded-3xl p-8">
-                    <div class="text-5xl mb-6 text-[#22c55e]"><i class="fa-solid fa-link"></i></div>
-                    <p class="text-xl">"I referred my friend to $REFERRAL... now he's referring the whole group chat to the moon."</p>
+                    <p class="text-lg">"I referred my friend... now he's referring the whole group chat to the moon."</p>
                 </div>
                 <div class="hover-card bg-white border border-gray-200 rounded-3xl p-8">
-                    <div class="text-5xl mb-6 text-[#22c55e]"><i class="fa-solid fa-chart-line"></i></div>
-                    <p class="text-xl">"Original dev stepped away. Community took over. Now we're making referrals great again."</p>
+                    <p class="text-lg">"Original dev rugged it. Community rugged the rug."</p>
                 </div>
                 <div class="hover-card bg-white border border-gray-200 rounded-3xl p-8">
-                    <div class="text-5xl mb-6 text-[#22c55e]"><i class="fa-solid fa-face-laugh-beam"></i></div>
-                    <p class="text-xl">"Why don't $REFERRAL holders go broke? Because every referral creates another referral."</p>
+                    <p class="text-lg">"Every referral creates another referral."</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- FINAL CTA -->
-    <div class="py-20 text-center bg-gray-50 border-t border-gray-100">
-        <h2 class="heading text-4xl sm:text-5xl font-bold mb-8 text-gray-900">Ready to join the referral revolution?</h2>
-        <a href="https://dexscreener.com/solana/EUyunpwVybXKn6oXPqmf67HdoGrX8VSXQZRXkkBuRfBj"
+    <div class="py-20 text-center bg-gray-50 border-t">
+        <h2 class="heading text-4xl sm:text-5xl font-bold mb-8">Ready to join the referral revolution?</h2>
+        <a href="https://dexscreener.com/solana/EUyunpwVybXKn6oXPqmf67HdoGrX8VSXQZRXkkBuRfBj" 
            target="_blank"
-           class="inline-block bg-[#22c55e] text-white text-2xl font-semibold px-12 py-7 rounded-3xl hover:bg-green-600">
+           class="inline-block bg-[#22c55e] text-white text-2xl font-semibold px-12 py-6 rounded-3xl hover:bg-green-600">
             VIEW & TRADE ON DEXSCREENER →
         </a>
     </div>
 
     <!-- DISCLAIMER -->
-    <div class="bg-gray-100 py-12 text-center text-sm text-gray-600 border-t border-gray-200">
+    <div class="bg-gray-100 py-12 text-center text-xs sm:text-sm text-gray-600">
         <div class="max-w-3xl mx-auto px-6">
-            <strong>Disclaimer:</strong> This is a meme coin for entertainment purposes only.
-            Cryptocurrency investments are highly volatile and risky. Always do your own research (DYOR).
-            $REFERRAL has no team allocation or presale. Not financial advice. Trade responsibly.
+            <strong>Disclaimer:</strong> This is a meme coin for entertainment purposes only. Cryptocurrency is highly volatile. DYOR. Not financial advice.
         </div>
     </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-gray-900 text-white py-10">
+        <div class="text-center text-sm text-gray-400">
+            Built with care by the $REFERRAL Community
+        </div>
+    </footer>
 
     <script>
         // Mobile Menu
         const menuBtn = document.getElementById('mobile-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
-        menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+        
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
 
+        document.querySelectorAll('.mobile-link').forEach(link => {
+            link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+        });
+
+        // Live Stats
         async function fetchLiveStats() {
             const container = document.getElementById('stats-container');
             try {
                 const res = await fetch('https://api.dexscreener.com/latest/dex/tokens/CvmRz15WYyhLRskuUFfRe6EybPjQdUqFA8URVcmSpump');
                 const data = await res.json();
                 const p = data.pairs?.[0] || {};
-               
+                
                 const price = parseFloat(p.priceUsd || 0).toFixed(8);
                 const mcap = p.fdv ? Math.round(p.fdv).toLocaleString() : '—';
                 const volume = p.volume?.h24 ? Math.round(p.volume.h24).toLocaleString() : '—';
 
                 container.innerHTML = `
                     <div class="hover-card bg-white border border-gray-200 rounded-3xl p-8 text-center">
-                        <div class="text-5xl mb-4 text-[#22c55e]"><i class="fa-solid fa-dollar-sign"></i></div>
+                        <div class="text-4xl mb-4 text-[#22c55e]"><i class="fa-solid fa-dollar-sign"></i></div>
                         <div class="text-3xl font-bold">$${price}</div>
                         <div class="text-gray-900">Current Price</div>
                     </div>
                     <div class="hover-card bg-white border border-gray-200 rounded-3xl p-8 text-center">
-                        <div class="text-5xl mb-4 text-[#22c55e]"><i class="fa-solid fa-chart-pie"></i></div>
+                        <div class="text-4xl mb-4 text-[#22c55e]"><i class="fa-solid fa-chart-pie"></i></div>
                         <div class="text-3xl font-bold">$${mcap}</div>
                         <div class="text-gray-900">Market Cap</div>
                     </div>
                     <div class="hover-card bg-white border border-gray-200 rounded-3xl p-8 text-center">
-                        <div class="text-5xl mb-4 text-[#22c55e]"><i class="fa-solid fa-arrow-trend-up"></i></div>
+                        <div class="text-4xl mb-4 text-[#22c55e]"><i class="fa-solid fa-arrow-trend-up"></i></div>
                         <div class="text-3xl font-bold">$${volume}</div>
                         <div class="text-gray-900">24h Volume</div>
                     </div>
-                    <div class="hover-card bg-white border border-gray-200 rounded-3xl p-8 text-center">
-                        <div class="text-5xl mb-4 text-[#22c55e]"><i class="fa-solid fa-users"></i></div>
-                        <div id="referral-count" class="text-3xl font-bold">—</div>
-                        <div class="text-gray-900">Live Referrals</div>
-                    </div>
                 `;
-            } catch (e) {
-                console.error("DexScreener fetch failed", e);
-            }
+            } catch (e) {}
         }
-
-        // Helius Live Referrals with CORS proxy
-        async function fetchReferralCount() {
-            const countEl = document.getElementById('referral-count');
-            if (!countEl) return;
-
-            console.log("🔄 Starting Helius referral count...");
-            countEl.textContent = 'Counting...';
-
-            const mint = "CvmRz15WYyhLRskuUFfRe6EybPjQdUqFA8URVcmSpump";
-            const apiKey = "77ba4c04-45b3-46df-b1ec-59890f7f1ff2";
-            const heliusUrl = `https://mainnet.helius-rpc.com/?api-key=${apiKey}`;
-
-            // Free CORS proxy to bypass browser restrictions
-            const proxyUrl = `https://corsproxy.io/?` + encodeURIComponent(heliusUrl);
-
-            let page = 1;
-            let totalReferrals = 0;
-            const limit = 1000;
-
-            try {
-                while (true) {
-                    console.log(`📄 Fetching page ${page}...`);
-                    
-                    const res = await fetch(proxyUrl, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            jsonrpc: "2.0",
-                            id: 1,
-                            method: "getTokenAccounts",
-                            params: { mint: mint, limit: limit, page: page }
-                        })
-                    });
-
-                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-                    const data = await res.json();
-                    console.log("📦 Helius response for page", page, ":", data);
-
-                    const accounts = data.result?.token_accounts || [];
-
-                    console.log(`✅ Page ${page} returned ${accounts.length} accounts`);
-
-                    if (accounts.length === 0) break;
-
-                    for (const acc of accounts) {
-                        const amount = acc.amount || acc.uiAmountString || "0";
-                        if (amount !== "0" && parseFloat(amount) > 0) {
-                            totalReferrals++;
-                        }
-                    }
-
-                    if (accounts.length < limit) break;
-                    page++;
-                }
-
-                console.log(`🎉 Final referral count: ${totalReferrals}`);
-                countEl.textContent = totalReferrals.toLocaleString();
-            } catch (e) {
-                console.error("🚨 Helius RPC failed:", e);
-                countEl.textContent = "—";
-                countEl.style.color = "#ef4444";
-            }
-        }
-
-        window.onload = () => {
-            fetchLiveStats();
-            fetchReferralCount();
-
-            // Refresh every 45 seconds
-            setInterval(() => {
-                fetchLiveStats();
-                fetchReferralCount();
-            }, 45000);
-        };
 
         function copyCA() {
             navigator.clipboard.writeText("CvmRz15WYyhLRskuUFfRe6EybPjQdUqFA8URVcmSpump").then(() => {
                 const toast = document.createElement('div');
-                toast.style.cssText = 'position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:#22c55e; color:white; padding:16px 28px; border-radius:9999px; font-weight:700; z-index:9999;';
-                toast.textContent = '✅ Contract Address Copied!';
+                toast.style.cssText = 'position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:#22c55e; color:white; padding:16px 28px; border-radius:9999px; font-weight:700; z-index:9999; box-shadow:0 10px 15px -3px rgb(0 0 0 / 0.2);';
+                toast.textContent = '✅ CA Copied!';
                 document.body.appendChild(toast);
                 setTimeout(() => toast.remove(), 2200);
             });
         }
+
+        window.onload = fetchLiveStats;
     </script>
 </body>
 </html>
