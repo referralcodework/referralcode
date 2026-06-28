@@ -225,10 +225,18 @@
     <!-- LIVE STATS -->
     <section id="live-stats" class="py-20 lg:py-28 bg-white">
         <div class="max-w-screen-2xl mx-auto px-5">
-            <div class="text-center mb-12">
+            <div class="text-center mb-4">
                 <h2 class="heading text-4xl sm:text-5xl font-bold text-gray-900">Live Market Stats</h2>
             </div>
-            <div class="grid md:grid-cols-3 gap-6" id="stats-container"></div>
+            <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 mb-12 text-sm">
+                <span id="stats-status" class="inline-flex items-center gap-2 text-gray-500">
+                    <span class="w-2 h-2 rounded-full bg-gray-300"></span> Loading…
+                </span>
+                <button id="stats-refresh" type="button" aria-label="Refresh market stats" class="hidden text-[#15803d] font-semibold hover:underline">
+                    <i class="fa-solid fa-rotate-right" aria-hidden="true"></i> Refresh
+                </button>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6" id="stats-container"></div>
         </div>
     </section>
 
@@ -336,36 +344,109 @@
             });
         });
 
-        async function fetchLiveStats() {
-            const container = document.getElementById('stats-container');
-            try {
-                const res = await fetch('https://api.dexscreener.com/latest/dex/tokens/CvmRz15WYyhLRskuUFfRe6EybPjQdUqFA8URVcmSpump');
-                const data = await res.json();
-                const p = data.pairs?.[0] || {};
+        // ---- Live market stats ----
+        const STATS = {
+            token: 'CvmRz15WYyhLRskuUFfRe6EybPjQdUqFA8URVcmSpump',
+            chartUrl: 'https://dexscreener.com/solana/EUyunpwVybXKn6oXPqmf67HdoGrX8VSXQZRXkkBuRfBj',
+            refreshMs: 45000,
+            timeoutMs: 8000,
+        };
+        const statsEl = document.getElementById('stats-container');
+        const statusEl = document.getElementById('stats-status');
+        const refreshBtn = document.getElementById('stats-refresh');
+        let statsTimer = null;
+        const usdCompact = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', notation: 'compact', maximumFractionDigits: 2 });
 
-                const price = parseFloat(p.priceUsd || 0).toFixed(8);
-                const mcap = p.fdv ? Math.round(p.fdv).toLocaleString() : '—';
-                const volume = p.volume?.h24 ? Math.round(p.volume.h24).toLocaleString() : '—';
-
-                container.innerHTML = `
-                    <div class="hover-card bg-white border border-gray-200 rounded-3xl p-8 text-center">
-                        <div class="text-5xl mb-4 text-[#15803d]"><i class="fa-solid fa-dollar-sign" aria-hidden="true"></i></div>
-                        <div class="text-3xl font-bold">$${price}</div>
-                        <div class="text-gray-900">Current Price</div>
-                    </div>
-                    <div class="hover-card bg-white border border-gray-200 rounded-3xl p-8 text-center">
-                        <div class="text-5xl mb-4 text-[#15803d]"><i class="fa-solid fa-chart-pie" aria-hidden="true"></i></div>
-                        <div class="text-3xl font-bold">$${mcap}</div>
-                        <div class="text-gray-900">Market Cap</div>
-                    </div>
-                    <div class="hover-card bg-white border border-gray-200 rounded-3xl p-8 text-center">
-                        <div class="text-5xl mb-4 text-[#15803d]"><i class="fa-solid fa-arrow-trend-up" aria-hidden="true"></i></div>
-                        <div class="text-3xl font-bold">$${volume}</div>
-                        <div class="text-gray-900">24h Volume</div>
-                    </div>
-                `;
-            } catch (e) {}
+        function fmtPrice(v) {
+            const n = parseFloat(v);
+            if (!isFinite(n) || n <= 0) return '—';
+            if (n >= 1) return '$' + n.toLocaleString('en-US', { maximumFractionDigits: 4 });
+            return '$' + n.toPrecision(4).replace(/0+$/, '').replace(/\.$/, '');
         }
+        function fmtBig(v) {
+            const n = parseFloat(v);
+            if (!isFinite(n) || n <= 0) return '—';
+            return usdCompact.format(n);
+        }
+        function statCard(icon, value, label, extra) {
+            return `
+                <div class="hover-card bg-white border border-gray-200 rounded-3xl p-8 text-center">
+                    <div class="text-4xl mb-4 text-[#15803d]"><i class="fa-solid ${icon}" aria-hidden="true"></i></div>
+                    <div class="text-3xl font-bold">${value}</div>
+                    <div class="text-gray-600 mt-1">${label}</div>
+                    ${extra || ''}
+                </div>`;
+        }
+        function renderSkeleton() {
+            statsEl.innerHTML = Array.from({ length: 4 }).map(() => `
+                <div class="bg-white border border-gray-200 rounded-3xl p-8 text-center animate-pulse">
+                    <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-gray-200"></div>
+                    <div class="h-7 w-3/4 mx-auto mb-3 rounded-lg bg-gray-200"></div>
+                    <div class="h-4 w-1/2 mx-auto rounded bg-gray-100"></div>
+                </div>`).join('');
+        }
+        function setStatus(html) { if (statusEl) statusEl.innerHTML = html; }
+
+        async function loadStats() {
+            if (!statsEl) return;
+            if (refreshBtn) refreshBtn.classList.add('hidden');
+            if (!statsEl.children.length) renderSkeleton();
+            setStatus('<span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span> Updating…');
+
+            const ctrl = new AbortController();
+            const to = setTimeout(() => ctrl.abort(), STATS.timeoutMs);
+            try {
+                const res = await fetch('https://api.dexscreener.com/latest/dex/tokens/' + STATS.token, { signal: ctrl.signal });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const data = await res.json();
+                const p = (data.pairs && data.pairs[0]) || null;
+                if (!p) throw new Error('no-pair');
+
+                const change = p.priceChange && typeof p.priceChange.h24 === 'number' ? p.priceChange.h24 : null;
+                let badge = '';
+                if (change !== null) {
+                    const up = change >= 0;
+                    badge = `<div class="mt-2 inline-flex items-center gap-1 text-sm font-semibold ${up ? 'text-[#15803d]' : 'text-red-600'}">
+                        <i class="fa-solid fa-arrow-${up ? 'up' : 'down'}" aria-hidden="true"></i> ${Math.abs(change).toFixed(2)}% (24h)
+                    </div>`;
+                }
+
+                statsEl.innerHTML =
+                    statCard('fa-dollar-sign', fmtPrice(p.priceUsd), 'Current Price', badge) +
+                    statCard('fa-chart-pie', fmtBig(p.marketCap || p.fdv), 'Market Cap') +
+                    statCard('fa-arrow-trend-up', fmtBig(p.volume && p.volume.h24), '24h Volume') +
+                    statCard('fa-water', fmtBig(p.liquidity && p.liquidity.usd), 'Liquidity');
+
+                setStatus('<span class="w-2 h-2 rounded-full bg-[#15803d]"></span> Live · auto-refreshes');
+                if (refreshBtn) refreshBtn.classList.remove('hidden');
+            } catch (err) {
+                statsEl.innerHTML = `
+                    <div class="sm:col-span-2 lg:col-span-4 bg-white border border-gray-200 rounded-3xl p-10 text-center">
+                        <div class="text-4xl mb-4 text-gray-400"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i></div>
+                        <div class="text-xl font-semibold text-gray-800 mb-2">Live data is taking a break</div>
+                        <p class="text-gray-600 mb-6">We couldn't reach the market feed right now. You can still view the full chart on DexScreener.</p>
+                        <div class="flex flex-wrap items-center justify-center gap-3">
+                            <button type="button" onclick="loadStats()" class="bg-[#15803d] hover:bg-green-800 text-white font-semibold px-6 py-3 rounded-2xl">
+                                <i class="fa-solid fa-rotate-right" aria-hidden="true"></i> Retry
+                            </button>
+                            <a href="${STATS.chartUrl}" target="_blank" rel="noopener noreferrer" class="text-[#15803d] font-semibold hover:underline px-2 py-3">Open DexScreener →</a>
+                        </div>
+                    </div>`;
+                setStatus('<span class="w-2 h-2 rounded-full bg-red-500"></span> Offline · retrying soon');
+                if (refreshBtn) refreshBtn.classList.remove('hidden');
+            } finally {
+                clearTimeout(to);
+                clearTimeout(statsTimer);
+                statsTimer = setTimeout(loadStats, STATS.refreshMs);
+            }
+        }
+
+        if (refreshBtn) refreshBtn.addEventListener('click', loadStats);
+        // Pause polling while the tab is hidden; refresh on return
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) { clearTimeout(statsTimer); }
+            else { loadStats(); }
+        });
 
         function copyCA() {
             navigator.clipboard.writeText("CvmRz15WYyhLRskuUFfRe6EybPjQdUqFA8URVcmSpump").then(() => {
@@ -377,7 +458,7 @@
             });
         }
 
-        document.addEventListener('DOMContentLoaded', fetchLiveStats);
+        document.addEventListener('DOMContentLoaded', loadStats);
     </script>
 </body>
 </html>
