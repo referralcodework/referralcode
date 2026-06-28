@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://referralcode.work/sitemap.xml

@@ -29,6 +29,24 @@
     <meta name="twitter:description" content="Community-owned Solana meme coin. Make Referrals Great Again.">
     <meta name="twitter:image" content="https://referralcode.work/preview.jpg">
 
+    <!-- Structured data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Referral Code",
+      "alternateName": "$REFERRAL",
+      "url": "https://referralcode.work/",
+      "description": "Community-owned Solana meme coin. Make Referrals Great Again.",
+      "image": "https://referralcode.work/preview.jpg",
+      "sameAs": [
+        "https://x.com/referralcodesol",
+        "https://t.me/referralcodecto",
+        "https://dexscreener.com/solana/EUyunpwVybXKn6oXPqmf67HdoGrX8VSXQZRXkkBuRfBj"
+      ]
+    }
+    </script>
+
     <!-- Fonts: preconnect + display=swap so text renders without waiting on the font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -154,7 +172,7 @@
 
                 <div class="bg-gray-100 border border-gray-300 rounded-3xl p-6">
                     <button type="button" onclick="copyCA()" aria-label="Copy contract address to clipboard" class="w-full flex items-center justify-between text-left cursor-pointer group rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#15803d] focus-visible:ring-offset-2">
-                        <span class="font-mono text-sm sm:text-base text-gray-800 pr-4 break-all">
+                        <span id="ca-address" class="font-mono text-sm sm:text-base text-gray-800 pr-4 break-all">
                             CvmRz15WYyhLRskuUFfRe6EybPjQdUqFA8URVcmSpump
                         </span>
                         <span class="text-[#15803d] font-semibold text-sm uppercase tracking-widest group-hover:text-green-700 flex items-center gap-2 flex-shrink-0">
@@ -346,6 +364,9 @@
     </div>
 
     <script>
+        // Single source of truth for the contract address (display, copy button, and stats feed)
+        const CONTRACT = 'CvmRz15WYyhLRskuUFfRe6EybPjQdUqFA8URVcmSpump';
+
         // Mobile Menu
         const menuBtn = document.getElementById('mobile-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
@@ -363,7 +384,7 @@
 
         // ---- Live market stats ----
         const STATS = {
-            token: 'CvmRz15WYyhLRskuUFfRe6EybPjQdUqFA8URVcmSpump',
+            token: CONTRACT,
             chartUrl: 'https://dexscreener.com/solana/EUyunpwVybXKn6oXPqmf67HdoGrX8VSXQZRXkkBuRfBj',
             refreshMs: 45000,
             timeoutMs: 8000,
@@ -466,7 +487,7 @@
         });
 
         function copyCA() {
-            navigator.clipboard.writeText("CvmRz15WYyhLRskuUFfRe6EybPjQdUqFA8URVcmSpump").then(() => {
+            navigator.clipboard.writeText(CONTRACT).then(() => {
                 const toast = document.createElement('div');
                 toast.style.cssText = 'position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:#15803d; color:white; padding:16px 28px; border-radius:9999px; font-weight:700; z-index:9999;';
                 toast.textContent = '✅ Contract Address Copied!';
@@ -475,7 +496,12 @@
             });
         }
 
-        document.addEventListener('DOMContentLoaded', loadStats);
+        document.addEventListener('DOMContentLoaded', () => {
+            // Keep the displayed address in sync with the single source of truth
+            const caEl = document.getElementById('ca-address');
+            if (caEl) caEl.textContent = CONTRACT;
+            loadStats();
+        });
     </script>
 </body>
 </html>
