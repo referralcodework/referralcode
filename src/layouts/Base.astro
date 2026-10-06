@@ -70,22 +70,15 @@ const jsonLd = {
     <script>
       import { cleanRef } from '../lib/format';
 
-      // Referral welcome: ?ref=name, remembered for the visit so the banner survives navigation.
+      // Referral welcome: shown on the page a ?ref=name link lands on, then gets out of the way.
       const banner = document.getElementById('ref-banner');
-      let ref: string | null = null;
-      try {
-        ref = cleanRef(new URLSearchParams(location.search).get('ref'));
-        if (ref) sessionStorage.setItem('ref', ref);
-        else ref = cleanRef(sessionStorage.getItem('ref'));
-        if (sessionStorage.getItem('ref-dismissed')) ref = null;
-      } catch { /* storage blocked: banner just won't persist */ }
+      const ref = cleanRef(new URLSearchParams(location.search).get('ref'));
       if (banner && ref) {
         banner.querySelector('[data-ref-name]')!.textContent = ref;
         banner.hidden = false;
-        banner.querySelector('[data-ref-close]')!.addEventListener('click', () => {
-          banner.hidden = true;
-          try { sessionStorage.setItem('ref-dismissed', '1'); } catch {}
-        });
+        const close = () => { banner.hidden = true; };
+        banner.querySelector('[data-ref-close]')!.addEventListener('click', close);
+        setTimeout(close, 10_000);
       }
 
       // Reveal-on-scroll
