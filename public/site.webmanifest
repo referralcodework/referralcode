@@ -1,7 +1,7 @@
 {
   "name": "Referral Code ($REFERRAL)",
   "short_name": "$REFERRAL",
-  "description": "Community-owned Solana meme coin. Make Referrals Great Again.",
+  "description": "All you need is one referral code. The Solana meme coin.",
   "start_url": "/",
   "icons": [
     { "src": "/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png" },

@@ -92,7 +92,7 @@ const themes = [
 
   const getName = () => cleanRef(nameInput.value);
   const refUrl = (n: string | null) => (n ? `${SITE.url}/?ref=${encodeURIComponent(n)}` : SITE.url);
-  const shareText = (n: string | null) => `${n ? `${n} here. ` : ''}Use my referral code: ${TOKEN.ticker} on Solana 🤝`;
+  const shareText = (n: string | null) => `All I need is one referral code: ${TOKEN.ticker} on Solana 🤝${n ? ` (from ${n})` : ''}`;
 
   async function draw() {
     const theme = THEMES[(document.querySelector<HTMLInputElement>('input[name=theme]:checked')?.value ?? 'green') as ThemeKey];

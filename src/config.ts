@@ -31,7 +31,7 @@ export const API = {
 
 export const SITE = {
   url: 'https://referralcode.work',
-  title: '$REFERRAL • Referral Code | Make Referrals Great Again',
+  title: '$REFERRAL • Referral Code | All you need is one referral code',
   description: 'Referral Code ($REFERRAL) — the community-owned Solana meme coin. Live on-chain stats, buy in one click, and make your own referral card.',
   ogImage: '/preview.jpg',
   themeColor: '#15803d',

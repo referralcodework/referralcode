@@ -4,12 +4,12 @@ import { NAV, LINKS } from '../config';
 ---
 <header class="fixed inset-x-0 top-0 z-50 border-b border-gray-200/80 bg-white/90 backdrop-blur-lg">
   <nav class="container-x flex h-[72px] items-center justify-between gap-4" aria-label="Main">
-    <a href="/" class="flex items-center gap-2.5" aria-label="Referral Code home">
+    <a href="/" class="flex shrink-0 items-center gap-2" aria-label="Referral Code home">
       <picture>
         <source srcset="/logo-72.webp" type="image/webp" />
         <img src="/logo-72.png" alt="" width="36" height="36" class="size-9" />
       </picture>
-      <span class="font-display text-xl font-bold tracking-tight">REFERRAL <span class="text-brand-700">CODE</span></span>
+      <span class="whitespace-nowrap font-display text-lg font-bold tracking-tight sm:text-xl">REFERRAL <span class="text-brand-700">CODE</span></span>
     </a>
 
     <ul class="hidden items-center gap-1 text-sm font-medium lg:flex">
@@ -18,7 +18,7 @@ import { NAV, LINKS } from '../config';
       ))}
     </ul>
 
-    <div class="flex items-center gap-1">
+    <div class="flex items-center gap-0.5 sm:gap-1">
       <a href={LINKS.x} target="_blank" rel="noopener noreferrer" class="grid size-11 place-items-center rounded-xl hover:bg-gray-100" aria-label="Referral Code on X">
         <Icon name="x" class="size-[18px]" />
       </a>
