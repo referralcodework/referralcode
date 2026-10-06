@@ -10,7 +10,7 @@ export const TOKEN = {
 export const SOL_MINT = 'So11111111111111111111111111111111111111112';
 
 export const LINKS = {
-  x: 'https://x.com/referralcodesol',
+  x: 'https://x.com/i/communities/2015843647540068814',
   xHandle: '@referralcodesol',
   telegram: 'https://t.me/referralcodecto',
   dexscreener: `https://dexscreener.com/solana/${TOKEN.pair}`,
