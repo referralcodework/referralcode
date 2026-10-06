@@ -1,0 +1,23 @@
+---
+// Inline SVG icons rendered at build time — no icon font, no runtime requests.
+import * as lucide from 'lucide-static';
+import { siX, siTelegram } from 'simple-icons';
+
+interface Props { name: string; class?: string; label?: string }
+const { name, class: cls = 'size-5', label } = Astro.props;
+
+const brands: Record<string, string> = { x: siX.path, telegram: siTelegram.path };
+const a11y = label ? `role="img" aria-label="${label}"` : 'aria-hidden="true" focusable="false"';
+
+let svg: string;
+if (brands[name]) {
+  svg = `<svg viewBox="0 0 24 24" fill="currentColor" class="${cls}" ${a11y}><path d="${brands[name]}"/></svg>`;
+} else {
+  const raw = (lucide as Record<string, string>)[name];
+  if (!raw) throw new Error(`Unknown icon: ${name}`);
+  svg = raw
+    .replace(/<svg[^>]*?class="[^"]*"/, (m) => m.replace(/class="[^"]*"/, `class="${cls}" ${a11y}`))
+    .replace(/\swidth="24"\s+height="24"/, '');
+}
+---
+<Fragment set:html={svg} />

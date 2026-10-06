@@ -1,0 +1,101 @@
+---
+import Icon from './Icon.astro';
+import { LINKS, TOKEN } from '../config';
+
+// Each check renders a verified-at-build default and is re-verified live from Solana in the browser.
+const checks = [
+  { key: 'mint', icon: 'Ban', title: 'Mint authority revoked', body: 'No one can ever print more tokens. Supply is fixed forever.' },
+  { key: 'freeze', icon: 'Snowflake', title: 'Freeze authority revoked', body: 'No one can freeze your wallet or block you from selling.' },
+  { key: 'update', icon: 'Lock', title: 'Metadata locked', body: 'Name, ticker and logo can never be changed by anyone.' },
+  { key: 'team', icon: 'Users', title: 'No team allocation', body: 'No presale, no team bag. The original dev left and the community took over.' },
+];
+---
+<section id="trust" class="section bg-gray-50">
+  <div class="container-x">
+    <div class="max-w-2xl" data-reveal>
+      <span class="eyebrow"><Icon name="ShieldCheck" class="size-3.5" /> Don't trust, verify</span>
+      <h2 class="h-section mt-4">Safety checks, read live from the blockchain.</h2>
+      <p class="lede">These aren't promises. The first three are checked by your browser directly against Solana every time this page loads.</p>
+    </div>
+
+    <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {checks.map((c) => (
+        <div class="card card-lift" data-reveal data-check={c.key}>
+          <div class="flex items-center justify-between">
+            <span class="grid size-12 place-items-center rounded-2xl bg-brand-100 text-brand-800"><Icon name={c.icon} class="size-6" /></span>
+            {c.key === 'team' ? (
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-600">Fair launch</span>
+            ) : (
+              <span data-check-status class="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-500">
+                <span class="size-1.5 animate-pulse rounded-full bg-gray-400"></span> Checking
+              </span>
+            )}
+          </div>
+          <h3 class="mt-5 text-lg font-semibold">{c.title}</h3>
+          <p class="mt-1.5 text-sm text-gray-600">{c.body}</p>
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-6 grid gap-4 lg:grid-cols-3">
+      <div class="card flex flex-col justify-between gap-4" data-reveal>
+        <div>
+          <div class="text-sm font-semibold uppercase tracking-widest text-gray-500">Total supply</div>
+          <div data-supply class="mt-1 font-display text-3xl font-bold tabular-nums">—</div>
+        </div>
+        <div class="text-sm text-gray-600">Token-2022 program · {TOKEN.decimals} decimals</div>
+      </div>
+      <div class="card flex flex-col justify-between gap-4" data-reveal data-holders-card hidden>
+        <div>
+          <div class="text-sm font-semibold uppercase tracking-widest text-gray-500">Holders</div>
+          <div data-holders class="mt-1 font-display text-3xl font-bold tabular-nums">—</div>
+        </div>
+        <div class="text-sm text-gray-600">Top 10 wallets hold <strong data-top10>—</strong> (excl. liquidity pool) · <span data-holders-updated></span></div>
+      </div>
+      <a href={LINKS.solscanToken} target="_blank" rel="noopener noreferrer" class="card card-lift flex items-center justify-between gap-4" data-reveal>
+        <div>
+          <div class="text-sm font-semibold uppercase tracking-widest text-gray-500">Verify it yourself</div>
+          <div class="mt-1 text-lg font-semibold">Open the token on Solscan</div>
+        </div>
+        <Icon name="ExternalLink" class="size-6 text-brand-700" />
+      </a>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { fetchMintInfo, fetchHolders } from '../lib/market';
+  import { count, ago } from '../lib/format';
+
+  function mark(key: string, state: 'ok' | 'bad' | 'unknown') {
+    const el = document.querySelector(`[data-check="${key}"] [data-check-status]`);
+    if (!el) return;
+    const map = {
+      ok: ['bg-brand-100 text-brand-800', 'bg-brand-600', 'Verified'],
+      bad: ['bg-red-100 text-red-700', 'bg-red-600', 'Not revoked'],
+      unknown: ['bg-gray-100 text-gray-600', 'bg-gray-400', 'Unavailable'],
+    } as const;
+    const [cls, dot, label] = map[state];
+    el.className = `inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${cls}`;
+    el.innerHTML = `<span class="size-1.5 rounded-full ${dot}"></span> ${label}`;
+  }
+
+  fetchMintInfo()
+    .then((m) => {
+      mark('mint', m.mintAuthority === null ? 'ok' : 'bad');
+      mark('freeze', m.freezeAuthority === null ? 'ok' : 'bad');
+      mark('update', m.updateAuthority === null ? 'ok' : 'bad');
+      const s = document.querySelector('[data-supply]');
+      if (s) s.textContent = Math.round(m.supply).toLocaleString('en-US');
+    })
+    .catch(() => ['mint', 'freeze', 'update'].forEach((k) => mark(k, 'unknown')));
+
+  fetchHolders().then((h) => {
+    if (!h) return;
+    const card = document.querySelector<HTMLElement>('[data-holders-card]');
+    if (card) card.hidden = false;
+    document.querySelector('[data-holders]')!.textContent = count(h.holders);
+    document.querySelector('[data-top10]')!.textContent = `${h.top10Pct}%`;
+    document.querySelector('[data-holders-updated]')!.textContent = `updated ${ago(h.updatedAt)}`;
+  });
+</script>

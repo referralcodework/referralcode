@@ -1,0 +1,103 @@
+---
+import Icon from './Icon.astro';
+import { LINKS } from '../config';
+
+const steps = [
+  { icon: 'Wallet', title: 'Get a Solana wallet', body: 'Install Phantom, Solflare or Backpack. Write your seed phrase on paper and never share it with anyone.' },
+  { icon: 'Coins', title: 'Add some SOL', body: 'Buy SOL on an exchange like Coinbase, Kraken or Binance and send it to your wallet. Keep a little extra for fees.' },
+  { icon: 'ArrowLeftRight', title: 'Swap right here', body: 'Connect your wallet in the swap box, enter how much SOL to spend, and confirm. That\'s it.' },
+];
+---
+<section id="buy" class="section bg-gray-50">
+  <div class="container-x grid items-start gap-12 lg:grid-cols-[1fr_440px]">
+    <div>
+      <div data-reveal>
+        <span class="eyebrow"><Icon name="Zap" class="size-3.5" /> Buy in one place</span>
+        <h2 class="h-section mt-4">Get $REFERRAL without leaving the page.</h2>
+        <p class="lede">The swap box is Jupiter's official plugin, Solana's most-used swap aggregator. It finds the best price and your wallet signs the trade. This site never sees your keys or funds.</p>
+      </div>
+
+      <ol class="mt-10 space-y-4">
+        {steps.map((s, i) => (
+          <li class="card flex gap-5 p-5 sm:p-6" data-reveal>
+            <span class="grid size-12 shrink-0 place-items-center rounded-2xl bg-brand-700 font-display text-lg font-bold text-white">{i + 1}</span>
+            <div>
+              <h3 class="flex items-center gap-2 text-lg font-semibold"><Icon name={s.icon} class="size-5 text-brand-700" /> {s.title}</h3>
+              <p class="mt-1 text-gray-600">{s.body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <div class="mt-6 flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900" data-reveal>
+        <Icon name="TriangleAlert" class="mt-0.5 size-5 shrink-0" />
+        <p><strong>Stay safe:</strong> nobody from the community will ever DM you first, ask for your seed phrase, or send you a "support" link. Always check the contract address matches the one on this site.</p>
+      </div>
+    </div>
+
+    <div class="lg:sticky lg:top-24">
+      <div class="card overflow-hidden p-2 sm:p-3">
+        <div id="jupiter-swap" class="relative min-h-[580px]">
+          <div data-swap-placeholder class="absolute inset-0 grid place-items-center p-6 text-center">
+            <div>
+              <div class="mx-auto size-10 animate-spin rounded-full border-4 border-brand-200 border-t-brand-700"></div>
+              <p class="mt-4 text-sm text-gray-600">Loading Jupiter swap…</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="mt-3 text-center text-sm text-gray-500">
+        Swap box not loading? <a href={LINKS.jupiter} target="_blank" rel="noopener noreferrer" class="font-semibold text-brand-800 hover:underline">Open on jup.ag</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  #jupiter-swap {
+    --jupiter-plugin-primary: 21, 128, 61;
+    --jupiter-plugin-background: 255, 255, 255;
+    --jupiter-plugin-primary-text: 11, 26, 16;
+    --jupiter-plugin-warning: 251, 191, 36;
+    --jupiter-plugin-interactive: 240, 253, 244;
+    --jupiter-plugin-module: 249, 250, 251;
+  }
+</style>
+
+<script>
+  import { API, SOL_MINT, TOKEN, LINKS } from '../config';
+
+  declare global { interface Window { Jupiter?: { init: (opts: Record<string, unknown>) => void } } }
+
+  const target = document.getElementById('jupiter-swap')!;
+  const fail = () => {
+    target.querySelector('[data-swap-placeholder]')!.innerHTML =
+      `<div><p class="font-semibold">The swap box couldn't load.</p><p class="mt-1 text-sm text-gray-600">An ad blocker or network issue may be blocking it.</p>
+       <a href="${LINKS.jupiter}" target="_blank" rel="noopener noreferrer" class="btn-primary mt-5">Buy on jup.ag</a></div>`;
+  };
+
+  function mount() {
+    const s = document.createElement('script');
+    s.src = API.jupiterPlugin;
+    s.async = true;
+    s.onload = () => {
+      if (!window.Jupiter) return fail();
+      window.Jupiter.init({
+        displayMode: 'integrated',
+        integratedTargetId: 'jupiter-swap',
+        formProps: { initialInputMint: SOL_MINT, initialOutputMint: TOKEN.mint, fixedMint: TOKEN.mint },
+        branding: { name: 'Referral Code', logoUri: `${location.origin}/logo-72.png` },
+        containerStyles: { minHeight: '580px' },
+        defaultExplorer: 'Solscan',
+      });
+      setTimeout(() => target.querySelector('[data-swap-placeholder]')?.remove(), 1500);
+    };
+    s.onerror = fail;
+    document.head.appendChild(s);
+  }
+
+  // Third-party code loads only when someone scrolls toward the swap box.
+  new IntersectionObserver((entries, obs) => {
+    if (entries.some((e) => e.isIntersecting)) { obs.disconnect(); mount(); }
+  }, { rootMargin: '400px' }).observe(target);
+</script>

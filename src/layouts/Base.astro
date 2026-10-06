@@ -1,0 +1,98 @@
+---
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { SITE, LINKS, TOKEN } from '../config';
+
+interface Props { title?: string; description?: string; path?: string }
+const { title = SITE.title, description = SITE.description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, SITE.url).href;
+const ogImage = new URL(SITE.ogImage, SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type': 'WebSite', '@id': `${SITE.url}/#website`, name: TOKEN.name, alternateName: TOKEN.ticker, url: `${SITE.url}/`, description: SITE.description },
+    { '@type': 'Organization', '@id': `${SITE.url}/#org`, name: TOKEN.name, url: `${SITE.url}/`, logo: `${SITE.url}/logo.png`, sameAs: [LINKS.x, LINKS.telegram, LINKS.dexscreener] },
+  ],
+};
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content={SITE.themeColor} />
+    <link rel="canonical" href={canonical} />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={TOKEN.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content={LINKS.xHandle} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+  </head>
+  <body class="min-h-dvh overflow-x-clip">
+    <a href="#main" class="sr-only z-[200] rounded-xl bg-brand-700 px-4 py-3 font-semibold text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4">Skip to content</a>
+    <Nav />
+    <div id="ref-banner" hidden class="fixed inset-x-0 top-[72px] z-40 px-4">
+      <div class="mx-auto flex max-w-xl items-center gap-3 rounded-2xl border border-brand-200 bg-brand-50/95 px-4 py-3 text-sm text-brand-900 shadow-lg backdrop-blur">
+        <span class="text-xl" aria-hidden="true">🤝</span>
+        <p class="flex-1"><strong data-ref-name></strong> referred you to {TOKEN.ticker}. Welcome to the movement.</p>
+        <button type="button" data-ref-close class="grid size-9 place-items-center rounded-xl hover:bg-brand-100" aria-label="Dismiss">✕</button>
+      </div>
+    </div>
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      import { cleanRef } from '../lib/format';
+
+      // Referral welcome: ?ref=name, remembered for the visit so the banner survives navigation.
+      const banner = document.getElementById('ref-banner');
+      let ref: string | null = null;
+      try {
+        ref = cleanRef(new URLSearchParams(location.search).get('ref'));
+        if (ref) sessionStorage.setItem('ref', ref);
+        else ref = cleanRef(sessionStorage.getItem('ref'));
+        if (sessionStorage.getItem('ref-dismissed')) ref = null;
+      } catch { /* storage blocked: banner just won't persist */ }
+      if (banner && ref) {
+        banner.querySelector('[data-ref-name]')!.textContent = ref;
+        banner.hidden = false;
+        banner.querySelector('[data-ref-close]')!.addEventListener('click', () => {
+          banner.hidden = true;
+          try { sessionStorage.setItem('ref-dismissed', '1'); } catch {}
+        });
+      }
+
+      // Reveal-on-scroll
+      const io = new IntersectionObserver((entries) => {
+        for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
+      }, { rootMargin: '0px 0px -10% 0px' });
+      document.querySelectorAll('[data-reveal]').forEach((el) => io.observe(el));
+    </script>
+  </body>
+</html>

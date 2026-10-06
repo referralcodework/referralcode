@@ -1,0 +1,204 @@
+---
+import '@fontsource/anton';
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+
+const templates = [
+  { key: 'classic', label: 'Classic' },
+  { key: 'pump', label: 'Number go up' },
+  { key: 'coupon', label: 'The code' },
+  { key: 'night', label: 'Late night' },
+];
+---
+<Base title="Meme generator • $REFERRAL" description="Make $REFERRAL memes in seconds: pick a template or upload your own image, add a caption and post to X.">
+  <section class="pt-[72px]">
+    <div class="container-x py-12 lg:py-16">
+      <div class="max-w-2xl">
+        <span class="eyebrow"><Icon name="Laugh" class="size-3.5" /> Meme generator</span>
+        <h1 class="mt-4 font-display text-4xl font-bold tracking-tight sm:text-5xl">Meme it into existence.</h1>
+        <p class="lede">Pick a template or use your own picture, write a caption, and post it. Your image never leaves your device.</p>
+      </div>
+
+      <div class="mt-10 grid items-start gap-8 lg:grid-cols-[1fr_400px]">
+        <div class="overflow-hidden rounded-3xl border border-gray-200 bg-gray-100 shadow-sm lg:order-2">
+          <canvas id="meme" width="1080" height="1080" class="block h-auto w-full" role="img" aria-label="Meme preview"></canvas>
+        </div>
+
+        <form id="meme-form" class="card space-y-6 lg:order-1" autocomplete="off" onsubmit="return false">
+          <fieldset>
+            <legend class="mb-2 font-semibold">Template</legend>
+            <div class="grid grid-cols-2 gap-2">
+              {templates.map((t, i) => (
+                <label class="cursor-pointer">
+                  <input type="radio" name="tpl" value={t.key} class="peer sr-only" checked={i === 0} />
+                  <span class="block rounded-2xl border-2 border-gray-200 px-3 py-3 text-center text-sm font-semibold peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-focus-visible:outline-2 peer-focus-visible:outline-brand-600">{t.label}</span>
+                </label>
+              ))}
+            </div>
+            <label class="btn-ghost mt-2 w-full cursor-pointer">
+              <Icon name="Upload" class="size-5" /> <span id="upload-label">Use my own image</span>
+              <input id="upload" type="file" accept="image/*" class="sr-only" />
+            </label>
+          </fieldset>
+
+          <div>
+            <label for="top" class="mb-2 block font-semibold">Top text</label>
+            <input id="top" class="input" maxlength="80" value="Me: I don't need a referral code" />
+          </div>
+          <div>
+            <label for="bottom" class="mb-2 block font-semibold">Bottom text</label>
+            <input id="bottom" class="input" maxlength="80" value="Also me: holding $REFERRAL" />
+          </div>
+          <button type="button" id="btn-random" class="btn-ghost w-full"><Icon name="Shuffle" class="size-5" /> Random caption</button>
+
+          <div class="grid grid-cols-2 gap-2 border-t border-gray-200 pt-6">
+            <button type="button" id="btn-share" class="btn-primary col-span-2"><Icon name="Share2" class="size-5" /> Share meme</button>
+            <button type="button" id="btn-download" class="btn-ghost"><Icon name="Download" class="size-5" /> Download</button>
+            <a id="btn-x" href="#" target="_blank" rel="noopener noreferrer" class="btn-ghost"><Icon name="x" class="size-4" /> Post</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { ensureFonts, FONTS, grid, logoBadge, roundRect, fitText, download, shareImage } from '../lib/canvas';
+  import { xIntent } from '../lib/ui';
+  import { toast } from '../lib/ui';
+  import { SITE, TOKEN } from '../config';
+
+  const S = 1080;
+  const canvas = document.getElementById('meme') as HTMLCanvasElement;
+  const ctx = canvas.getContext('2d')!;
+  const top = document.getElementById('top') as HTMLInputElement;
+  const bottom = document.getElementById('bottom') as HTMLInputElement;
+  const upload = document.getElementById('upload') as HTMLInputElement;
+  const xBtn = document.getElementById('btn-x') as HTMLAnchorElement;
+  let userImg: HTMLImageElement | null = null;
+
+  const CAPTIONS: [string, string][] = [
+    ["Me: I don't need a referral code", 'Also me: holding $REFERRAL'],
+    ['Nobody:', 'Me in every group chat: "use my referral code"'],
+    ['Dev left', 'Community said "we\'ll take it from here"'],
+    ['They asked for my referral code', 'I sent them the contract address'],
+    ['One does not simply', 'skip the referral code'],
+    ['My referral code', 'is my love language'],
+    ['Referral marketing?', 'More like referral moonketing'],
+    ['When the referral', 'refers another referral'],
+  ];
+
+  const tpl = () => (document.querySelector<HTMLInputElement>('input[name=tpl]:checked')?.value ?? 'classic');
+
+  async function background(key: string) {
+    if (userImg) {
+      // Cover-fit the user's image
+      const r = Math.max(S / userImg.width, S / userImg.height);
+      const w = userImg.width * r, h = userImg.height * r;
+      ctx.fillStyle = '#000'; ctx.fillRect(0, 0, S, S);
+      ctx.drawImage(userImg, (S - w) / 2, (S - h) / 2, w, h);
+      return;
+    }
+    if (key === 'classic') {
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, S, S);
+      grid(ctx, S, S, 54, 'rgba(21,128,61,.08)');
+      await logoBadge(ctx, S / 2, S / 2, 260);
+    } else if (key === 'pump') {
+      const g = ctx.createLinearGradient(0, 0, 0, S);
+      g.addColorStop(0, '#16a34a'); g.addColorStop(1, '#052e16');
+      ctx.fillStyle = g; ctx.fillRect(0, 0, S, S);
+      grid(ctx, S, S, 54, 'rgba(255,255,255,.07)');
+      // A very scientific chart
+      const pts = [[60, 860], [200, 820], [300, 840], [420, 740], [520, 770], [640, 600], [740, 630], [860, 420], [1020, 250]];
+      ctx.save();
+      ctx.lineWidth = 16; ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.strokeStyle = '#4ade80';
+      ctx.shadowColor = 'rgba(74,222,128,.6)'; ctx.shadowBlur = 30;
+      ctx.beginPath(); pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.stroke();
+      ctx.restore();
+      await logoBadge(ctx, 1000, 250, 70);
+    } else if (key === 'coupon') {
+      ctx.fillStyle = '#f0fdf4'; ctx.fillRect(0, 0, S, S);
+      roundRect(ctx, 90, 300, 900, 480, 48);
+      ctx.fillStyle = '#ffffff'; ctx.fill();
+      ctx.setLineDash([26, 18]); ctx.lineWidth = 8; ctx.strokeStyle = '#15803d'; ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = '#15803d'; ctx.font = `700 46px ${FONTS.display}`; ctx.textAlign = 'center';
+      ctx.fillText('YOUR REFERRAL CODE', S / 2, 420);
+      ctx.fillStyle = '#0b1a10'; ctx.font = `700 150px ${FONTS.display}`;
+      ctx.fillText(TOKEN.ticker, S / 2, 600);
+      ctx.fillStyle = '#6b7280'; ctx.font = `600 34px ${FONTS.body}`;
+      ctx.fillText('valid forever · no expiry · on Solana', S / 2, 690);
+      ctx.textAlign = 'left';
+    } else {
+      const g = ctx.createRadialGradient(S / 2, S / 2, 50, S / 2, S / 2, S * 0.75);
+      g.addColorStop(0, '#14532d'); g.addColorStop(1, '#030712');
+      ctx.fillStyle = g; ctx.fillRect(0, 0, S, S);
+      ctx.fillStyle = 'rgba(255,255,255,.8)';
+      for (let i = 0; i < 70; i++) { const x = (i * 157) % S, y = (i * 263) % S; ctx.fillRect(x, y, 3, 3); }
+      await logoBadge(ctx, S / 2, S / 2, 200);
+    }
+  }
+
+  function caption(text: string, where: 'top' | 'bottom') {
+    if (!text.trim()) return;
+    const { lines, size } = fitText(ctx, text.toUpperCase(), (s) => `400 ${s}px ${FONTS.meme}`, S - 100, 110, 48, 3);
+    ctx.font = `400 ${size}px ${FONTS.meme}`;
+    ctx.textAlign = 'center';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = Math.max(6, size / 7);
+    ctx.strokeStyle = '#000';
+    ctx.fillStyle = '#fff';
+    const lh = size * 1.08;
+    const startY = where === 'top' ? 40 + size : S - 70 - lh * (lines.length - 1);
+    lines.forEach((l, i) => {
+      const y = startY + i * lh;
+      ctx.strokeText(l, S / 2, y);
+      ctx.fillText(l, S / 2, y);
+    });
+    ctx.textAlign = 'left';
+  }
+
+  async function draw() {
+    await background(tpl());
+    caption(top.value, 'top');
+    caption(bottom.value, 'bottom');
+    // Watermark
+    ctx.font = `600 26px ${FONTS.body}`;
+    const wm = 'referralcode.work';
+    const w = ctx.measureText(wm).width + 32;
+    roundRect(ctx, S - w - 20, S - 54 - 20 + 6, w, 44, 22);
+    ctx.fillStyle = 'rgba(0,0,0,.45)'; ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.fillText(wm, S - w - 4, S - 30);
+    xBtn.href = xIntent(`${top.value} / ${bottom.value} ${TOKEN.ticker}`.trim(), SITE.url);
+  }
+
+  document.getElementById('meme-form')!.addEventListener('input', (e) => {
+    if ((e.target as HTMLInputElement).name === 'tpl') { userImg = null; document.getElementById('upload-label')!.textContent = 'Use my own image'; }
+    draw();
+  });
+  upload.addEventListener('change', () => {
+    const f = upload.files?.[0];
+    if (!f) return;
+    if (!f.type.startsWith('image/')) return toast('Please choose an image file', 'error');
+    const url = URL.createObjectURL(f);
+    const img = new Image();
+    img.onload = () => { userImg = img; document.getElementById('upload-label')!.textContent = 'Change image'; draw(); };
+    img.onerror = () => toast("Couldn't read that image", 'error');
+    img.src = url;
+    upload.value = '';
+  });
+  let lastIdx = 0;
+  document.getElementById('btn-random')!.addEventListener('click', () => {
+    let i = lastIdx;
+    while (i === lastIdx) i = Math.floor(Math.random() * CAPTIONS.length);
+    lastIdx = i;
+    [top.value, bottom.value] = CAPTIONS[i];
+    draw();
+  });
+  document.getElementById('btn-download')!.addEventListener('click', () => download(canvas, 'referral-meme.png'));
+  document.getElementById('btn-share')!.addEventListener('click', async () => {
+    const r = await shareImage(canvas, 'referral-meme.png', `${TOKEN.ticker} 🤝`, SITE.url);
+    if (r === 'unsupported') { await download(canvas, 'referral-meme.png'); toast('Meme downloaded. Attach it to your post.'); }
+  });
+
+  ensureFonts().then(draw);
+</script>

@@ -1,0 +1,271 @@
+---
+import Icon from './Icon.astro';
+import { LINKS } from '../config';
+
+const stats = [
+  { key: 'price', label: 'Price', icon: 'CircleDollarSign' },
+  { key: 'mcap', label: 'Market cap', icon: 'PieChart' },
+  { key: 'liq', label: 'Liquidity', icon: 'Droplets' },
+  { key: 'vol', label: '24h volume', icon: 'BarChart3' },
+];
+const ranges = [
+  { key: '1d', label: '24H' },
+  { key: '7d', label: '7D' },
+  { key: '30d', label: '30D' },
+];
+---
+<section id="live" class="section">
+  <div class="container-x">
+    <div class="flex flex-wrap items-end justify-between gap-6" data-reveal>
+      <div class="max-w-2xl">
+        <span class="eyebrow"><span class="size-2 animate-pulse rounded-full bg-brand-600"></span> Live</span>
+        <h2 class="h-section mt-4">The market, in real time.</h2>
+      </div>
+      <div class="flex items-center gap-3 text-sm">
+        <span data-live-status role="status" aria-live="polite" class="inline-flex items-center gap-2 text-gray-500">
+          <span class="size-2 rounded-full bg-gray-300"></span> Connecting…
+        </span>
+        <button type="button" data-live-refresh class="btn-ghost min-h-10 px-3 text-sm" aria-label="Refresh live data">
+          <Icon name="RefreshCw" class="size-4" /> Refresh
+        </button>
+      </div>
+    </div>
+
+    <!-- Stat tiles -->
+    <div class="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-4">
+      {stats.map((s) => (
+        <div class="card p-5 sm:p-6" data-stat={s.key}>
+          <div class="flex items-center gap-2 text-sm font-medium text-gray-500"><Icon name={s.icon} class="size-4 text-brand-700" /> {s.label}</div>
+          <div data-value class="mt-2 font-display text-2xl font-bold tabular-nums sm:text-3xl"><span class="skeleton inline-block h-8 w-28 align-middle"></span></div>
+          <div data-sub class="mt-1 h-5 text-sm font-semibold tabular-nums"></div>
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-4 grid gap-4 lg:grid-cols-[1.6fr_1fr]">
+      <!-- Chart -->
+      <div class="card p-5 sm:p-6">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div class="text-sm font-medium text-gray-500">Price (USD)</div>
+            <div data-chart-readout class="font-display text-lg font-semibold tabular-nums">&nbsp;</div>
+          </div>
+          <div class="inline-flex rounded-xl bg-gray-100 p-1" role="tablist" aria-label="Chart range">
+            {ranges.map((r, i) => (
+              <button type="button" role="tab" data-range={r.key} aria-selected={i === 1 ? 'true' : 'false'}
+                class="min-h-10 rounded-lg px-4 text-sm font-semibold text-gray-600 aria-selected:bg-white aria-selected:text-ink aria-selected:shadow-sm">{r.label}</button>
+            ))}
+          </div>
+        </div>
+        <div data-chart class="relative mt-4 h-64 touch-none select-none sm:h-72">
+          <div class="skeleton absolute inset-0"></div>
+        </div>
+        <div class="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-gray-500">
+          <span>Data: GeckoTerminal</span>
+          <a href={LINKS.dexscreener} target="_blank" rel="noopener noreferrer" class="font-semibold text-brand-800 hover:underline">Full chart on DexScreener →</a>
+        </div>
+      </div>
+
+      <!-- Buy pressure + trades -->
+      <div class="card flex flex-col p-5 sm:p-6">
+        <div class="text-sm font-medium text-gray-500">24h buys vs sells</div>
+        <div class="mt-2 flex items-center justify-between text-sm font-semibold tabular-nums">
+          <span class="text-brand-700"><span data-buys>—</span> buys</span>
+          <span class="text-red-600"><span data-sells>—</span> sells</span>
+        </div>
+        <div class="mt-2 flex h-2.5 overflow-hidden rounded-full bg-red-100" aria-hidden="true">
+          <div data-buy-bar class="h-full w-1/2 rounded-full bg-brand-600 transition-[width] duration-700"></div>
+        </div>
+
+        <div class="mt-6 flex items-center justify-between">
+          <div class="text-sm font-medium text-gray-500">Recent trades</div>
+          <a href={LINKS.geckoterminal} target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-brand-800 hover:underline">All trades →</a>
+        </div>
+        <ol data-trades class="mt-3 max-h-80 flex-1 space-y-1 overflow-y-auto pr-1 text-sm lg:max-h-[300px]" aria-label="Recent trades">
+          {Array.from({ length: 5 }).map(() => <li class="skeleton h-11"></li>)}
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { fetchMarket, fetchTrades, fetchCandles, poll, type Candle, type Market, type Trade } from '../lib/market';
+  import { price, usd, pct, count, ago, short } from '../lib/format';
+  import { LINKS } from '../config';
+
+  const $ = <T extends Element = HTMLElement>(s: string, root: ParentNode = document) => root.querySelector<T>(s);
+  const statusEl = $('[data-live-status]')!;
+  const setStatus = (tone: 'ok' | 'busy' | 'err', text: string) => {
+    const dot = { ok: 'bg-brand-600', busy: 'bg-amber-400 animate-pulse', err: 'bg-red-500' }[tone];
+    statusEl.innerHTML = `<span class="size-2 rounded-full ${dot}"></span> ${text}`;
+  };
+  const setStat = (key: string, value: string, sub = '', subTone = '') => {
+    const card = $(`[data-stat="${key}"]`)!;
+    $('[data-value]', card)!.textContent = value;
+    const s = $('[data-sub]', card)!;
+    s.textContent = sub;
+    s.className = `mt-1 h-5 text-sm font-semibold tabular-nums ${subTone}`;
+  };
+
+  // ---------- Market + trades ----------
+  function renderMarket(m: Market) {
+    const up = (m.change.h24 ?? 0) >= 0;
+    setStat('price', price(m.priceUsd), m.change.h24 === null ? '' : `${pct(m.change.h24)} 24h`, up ? 'text-brand-700' : 'text-red-600');
+    setStat('mcap', usd(m.marketCap), 'All supply circulating', 'text-gray-500 font-medium');
+    setStat('liq', usd(m.liquidity), m.dex ? `${m.dex} pool` : '', 'text-gray-500 font-medium capitalize');
+    setStat('vol', usd(m.volume24), `${count(m.txns24.buys + m.txns24.sells)} trades`, 'text-gray-500 font-medium');
+    const total = m.txns24.buys + m.txns24.sells;
+    $('[data-buys]')!.textContent = count(m.txns24.buys);
+    $('[data-sells]')!.textContent = count(m.txns24.sells);
+    $('[data-buy-bar]')!.style.width = total ? `${(m.txns24.buys / total) * 100}%` : '50%';
+    window.dispatchEvent(new CustomEvent('market', { detail: m }));
+  }
+
+  function renderTrades(trades: Trade[]) {
+    const list = $('[data-trades]')!;
+    if (!trades.length) { list.innerHTML = '<li class="py-6 text-center text-gray-500">No trades yet.</li>'; return; }
+    list.innerHTML = trades.map((t) => {
+      const buy = t.kind === 'buy';
+      return `<li>
+        <a href="${LINKS.solscanTx(t.tx)}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 rounded-xl px-2 py-2 hover:bg-gray-50">
+          <span class="grid size-7 shrink-0 place-items-center rounded-lg text-xs font-bold ${buy ? 'bg-brand-100 text-brand-800' : 'bg-red-100 text-red-700'}">${buy ? 'B' : 'S'}</span>
+          <span class="min-w-0 flex-1">
+            <span class="block font-semibold tabular-nums">${usd(t.usd)} <span class="font-normal text-gray-500">· ${count(t.tokens)} REF</span></span>
+            <span class="block font-mono text-xs text-gray-500">${short(t.wallet)}</span>
+          </span>
+          <span class="shrink-0 text-xs text-gray-500" data-ago="${t.at}">${ago(t.at)}</span>
+        </a></li>`;
+    }).join('');
+  }
+
+  async function refreshAll() {
+    setStatus('busy', 'Updating…');
+    const [m, t] = await Promise.allSettled([fetchMarket(), fetchTrades()]);
+    if (m.status === 'fulfilled') renderMarket(m.value);
+    if (t.status === 'fulfilled') renderTrades(t.value);
+    if (m.status === 'rejected' && t.status === 'rejected') {
+      setStatus('err', 'Feed unavailable, retrying');
+      ['price', 'mcap', 'liq', 'vol'].forEach((k) => setStat(k, '—'));
+    } else {
+      setStatus('ok', `Live · updated ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`);
+    }
+  }
+  const refreshNow = poll(refreshAll, 45_000);
+  $('[data-live-refresh]')!.addEventListener('click', () => { refreshNow(); loadChart(currentRange); });
+  // Keep "x ago" labels fresh between polls
+  setInterval(() => document.querySelectorAll<HTMLElement>('[data-ago]').forEach((el) => { el.textContent = ago(el.dataset.ago!); }), 15_000);
+
+  // ---------- Chart ----------
+  const RANGES = {
+    '1d': { tf: 'minute', agg: 15, limit: 96, span: 864e5 },
+    '7d': { tf: 'hour', agg: 1, limit: 168, span: 7 * 864e5 },
+    '30d': { tf: 'hour', agg: 4, limit: 180, span: 30 * 864e5 },
+  } as const;
+  type RangeKey = keyof typeof RANGES;
+  let currentRange: RangeKey = '7d';
+  const chartEl = $('[data-chart]')!;
+  const readout = $('[data-chart-readout]')!;
+  const cache = new Map<RangeKey, { at: number; data: Candle[] }>();
+
+  async function loadChart(key: RangeKey) {
+    currentRange = key;
+    const r = RANGES[key];
+    let entry = cache.get(key);
+    if (!entry || Date.now() - entry.at > 60_000) {
+      try {
+        entry = { at: Date.now(), data: await fetchCandles(r.tf, r.agg, r.limit) };
+        cache.set(key, entry);
+      } catch {
+        if (!entry) { chartEl.innerHTML = '<div class="grid h-full place-items-center text-sm text-gray-500">Chart unavailable right now.</div>'; return; }
+      }
+    }
+    if (currentRange === key) drawChart(entry.data, r.span);
+  }
+
+  function drawChart(candles: Candle[], span: number) {
+    const W = 800, H = 300, PAD_T = 12, VOL_H = 46, PRICE_H = H - VOL_H - PAD_T - 8;
+    const now = Date.now();
+    const start = now - span;
+    // Carry the last known price into the window so quiet periods render as flat, not empty.
+    const before = candles.filter((c) => c.t < start).at(-1);
+    const inWin = candles.filter((c) => c.t >= start);
+    if (!inWin.length && !before) { chartEl.innerHTML = '<div class="grid h-full place-items-center text-sm text-gray-500">No trades in this range yet.</div>'; return; }
+
+    const pts: { t: number; p: number }[] = [];
+    pts.push({ t: start, p: before ? before.c : inWin[0].o });
+    for (const c of inWin) pts.push({ t: c.t, p: c.c });
+    pts.push({ t: now, p: pts.at(-1)!.p });
+
+    const ps = pts.map((p) => p.p);
+    let lo = Math.min(...ps), hi = Math.max(...ps);
+    if (hi === lo) { hi *= 1.05; lo *= 0.95; }
+    const padY = (hi - lo) * 0.12; hi += padY; lo -= padY;
+    const x = (t: number) => ((t - start) / span) * W;
+    const y = (p: number) => PAD_T + (1 - (p - lo) / (hi - lo)) * PRICE_H;
+
+    // Step path: price holds until the next trade
+    let d = `M${x(pts[0].t).toFixed(1)},${y(pts[0].p).toFixed(1)}`;
+    for (let i = 1; i < pts.length; i++) d += `H${x(pts[i].t).toFixed(1)}V${y(pts[i].p).toFixed(1)}`;
+    const area = `${d}V${PAD_T + PRICE_H}H0Z`;
+    const up = pts.at(-1)!.p >= pts[0].p;
+    const stroke = up ? '#15803d' : '#dc2626';
+
+    const maxV = Math.max(1, ...inWin.map((c) => c.v));
+    const bw = Math.max(2, (W / (RANGES[currentRange].limit || 100)) * 0.7);
+    const bars = inWin.map((c) => {
+      const h = Math.max(1.5, (c.v / maxV) * VOL_H);
+      return `<rect x="${(x(c.t) - bw / 2).toFixed(1)}" y="${(H - h).toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="1" fill="${c.c >= c.o ? '#86efac' : '#fca5a5'}"/>`;
+    }).join('');
+
+    const grid = [0.25, 0.5, 0.75].map((f) => `<line x1="0" x2="${W}" y1="${PAD_T + f * PRICE_H}" y2="${PAD_T + f * PRICE_H}" stroke="#e5e7eb" stroke-dasharray="3 5"/>`).join('');
+
+    chartEl.innerHTML = `
+      <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" class="size-full overflow-visible" role="img" aria-label="Price chart">
+        <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${stroke}" stop-opacity=".22"/><stop offset="1" stop-color="${stroke}" stop-opacity="0"/></linearGradient></defs>
+        ${grid}${bars}
+        <path d="${area}" fill="url(#g)"/>
+        <path d="${d}" fill="none" stroke="${stroke}" stroke-width="2.25" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>
+        <line data-xh x1="0" x2="0" y1="0" y2="${H}" stroke="#9ca3af" stroke-dasharray="3 3" vector-effect="non-scaling-stroke" opacity="0"/>
+      </svg>
+      <span data-dot class="pointer-events-none absolute size-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white opacity-0 shadow" style="background:${stroke}"></span>`;
+
+    const first = pts[0].p, last = pts.at(-1)!.p;
+    const changeTxt = `${pct(((last - first) / first) * 100)}`;
+    const setReadout = (p: number, t?: number) => {
+      readout.innerHTML = `${price(p)} <span class="text-sm ${t ? 'text-gray-500' : up ? 'text-brand-700' : 'text-red-600'}">${t ? new Date(t).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : changeTxt}</span>`;
+    };
+    setReadout(last);
+
+    const svg = chartEl.querySelector('svg')!;
+    const xh = svg.querySelector<SVGLineElement>('[data-xh]')!;
+    const dot = chartEl.querySelector<HTMLElement>('[data-dot]')!;
+    const onMove = (clientX: number) => {
+      const rect = svg.getBoundingClientRect();
+      const t = start + ((clientX - rect.left) / rect.width) * span;
+      let pt = pts[0];
+      for (const p of pts) { if (p.t <= t) pt = p; else break; }
+      const px = Math.min(Math.max(clientX - rect.left, 0), rect.width);
+      xh.setAttribute('x1', String((px / rect.width) * W)); xh.setAttribute('x2', String((px / rect.width) * W)); xh.setAttribute('opacity', '1');
+      dot.style.left = `${px}px`; dot.style.top = `${(y(pt.p) / H) * rect.height}px`; dot.style.opacity = '1';
+      setReadout(pt.p, Math.min(t, now));
+    };
+    const onLeave = () => { xh.setAttribute('opacity', '0'); dot.style.opacity = '0'; setReadout(last); };
+    svg.addEventListener('pointermove', (e) => onMove(e.clientX));
+    svg.addEventListener('pointerdown', (e) => onMove(e.clientX));
+    svg.addEventListener('pointerleave', onLeave);
+    svg.addEventListener('pointerup', (e) => { if (e.pointerType !== 'mouse') onLeave(); });
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('[data-range]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-range]').forEach((b) => b.setAttribute('aria-selected', String(b === btn)));
+      loadChart(btn.dataset.range as RangeKey);
+    });
+  });
+
+  // Load the chart only when it scrolls near view (saves API quota for bounce visits)
+  new IntersectionObserver((entries, obs) => {
+    if (entries.some((e) => e.isIntersecting)) { obs.disconnect(); loadChart(currentRange); }
+  }, { rootMargin: '300px' }).observe(chartEl);
+</script>

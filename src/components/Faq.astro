@@ -1,0 +1,33 @@
+---
+import Icon from './Icon.astro';
+import { TOKEN, LINKS } from '../config';
+
+const faqs = [
+  { q: `What is ${TOKEN.ticker}?`, a: 'A community-owned meme coin on Solana built around one joke everyone on the internet gets: "use my referral code." The original developer stepped away and holders took over everything: the socials, the website, the vibe.' },
+  { q: 'Is it safe?', a: 'The token contract is as locked-down as Solana allows: mint, freeze and metadata authorities are all revoked, which you can verify live above or on Solscan. That protects you from supply inflation and frozen wallets. It does not protect you from price risk. Meme coins can drop to zero, so only use money you can afford to lose.' },
+  { q: 'Where can I buy it?', a: 'Right on this page using the Jupiter swap box, or on any Solana DEX aggregator. Always double-check the contract address. Copy it from this site, not from a DM or a reply.' },
+  { q: 'What does the share card do?', a: 'It makes a branded image with your name and the live price, plus a personal link (referralcode.work/?ref=yourname). People who open your link see that you referred them. It\'s pure bragging rights for now, with no rewards or tracking.' },
+  { q: 'Is there a team or roadmap?', a: 'No team wallet, no presale, no promises. The roadmap is whatever the community builds. Join the Telegram to help.' },
+  { q: 'Why are some stats missing sometimes?', a: 'Live numbers come from free public APIs (DexScreener, GeckoTerminal and Solana RPC). If one is slow or rate-limited, that tile pauses and retries automatically.' },
+];
+---
+<section id="faq" class="section">
+  <div class="container-x grid gap-12 lg:grid-cols-[1fr_1.5fr]">
+    <div data-reveal>
+      <span class="eyebrow"><Icon name="CircleHelp" class="size-3.5" /> FAQ</span>
+      <h2 class="h-section mt-4">Questions, answered.</h2>
+      <p class="lede">Still curious? Ask the community on <a href={LINKS.telegram} target="_blank" rel="noopener noreferrer" class="font-semibold text-brand-800 underline-offset-2 hover:underline">Telegram</a>.</p>
+    </div>
+    <div class="space-y-3">
+      {faqs.map((f) => (
+        <details class="group card p-0 open:border-brand-300" data-reveal>
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-5 text-lg font-semibold sm:p-6 [&::-webkit-details-marker]:hidden">
+            {f.q}
+            <Icon name="Plus" class="size-5 shrink-0 text-brand-700 transition group-open:rotate-45" />
+          </summary>
+          <p class="-mt-2 px-5 pb-6 text-gray-600 sm:px-6">{f.a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>

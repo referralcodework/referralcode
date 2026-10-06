@@ -1,0 +1,41 @@
+---
+import Icon from './Icon.astro';
+import ContractAddress from './ContractAddress.astro';
+import { LINKS, NAV, TOKEN } from '../config';
+const year = new Date().getFullYear();
+---
+<footer class="border-t border-gray-200 bg-gray-50">
+  <div class="container-x grid gap-10 py-14 md:grid-cols-[1.4fr_1fr_1fr]">
+    <div class="space-y-4">
+      <a href="/" class="inline-flex items-center gap-2.5">
+        <img src="/logo-72.webp" alt="" width="36" height="36" class="size-9" />
+        <span class="font-display text-xl font-bold tracking-tight">REFERRAL <span class="text-brand-700">CODE</span></span>
+      </a>
+      <p class="max-w-sm text-sm text-gray-600">Community-owned meme coin on Solana. No team allocation, no presale, authorities revoked on-chain.</p>
+      <ContractAddress size="sm" />
+    </div>
+    <div>
+      <h2 class="mb-3 text-sm font-semibold uppercase tracking-widest text-gray-500">Explore</h2>
+      <ul class="space-y-0.5 text-sm">
+        {NAV.map((l) => <li><a href={l.href} class="inline-flex min-h-10 items-center text-gray-700 hover:text-brand-800">{l.label}</a></li>)}
+      </ul>
+    </div>
+    <div>
+      <h2 class="mb-3 text-sm font-semibold uppercase tracking-widest text-gray-500">Community & data</h2>
+      <ul class="space-y-0.5 text-sm">
+        <li><a href={LINKS.x} target="_blank" rel="noopener noreferrer" class="inline-flex min-h-10 items-center gap-2 text-gray-700 hover:text-brand-800"><Icon name="x" class="size-3.5" /> X {LINKS.xHandle}</a></li>
+        <li><a href={LINKS.telegram} target="_blank" rel="noopener noreferrer" class="inline-flex min-h-10 items-center gap-2 text-gray-700 hover:text-brand-800"><Icon name="telegram" class="size-4" /> Telegram</a></li>
+        <li><a href={LINKS.dexscreener} target="_blank" rel="noopener noreferrer" class="inline-flex min-h-10 items-center text-gray-700 hover:text-brand-800">DexScreener</a></li>
+        <li><a href={LINKS.geckoterminal} target="_blank" rel="noopener noreferrer" class="inline-flex min-h-10 items-center text-gray-700 hover:text-brand-800">GeckoTerminal</a></li>
+        <li><a href={LINKS.solscanToken} target="_blank" rel="noopener noreferrer" class="inline-flex min-h-10 items-center text-gray-700 hover:text-brand-800">Solscan</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-gray-200">
+    <p class="container-x py-8 text-xs leading-relaxed text-gray-500">
+      <strong class="text-gray-700">Disclaimer:</strong> {TOKEN.ticker} is a meme coin with no intrinsic value or expectation of financial return. It is for entertainment only.
+      Crypto assets are highly volatile and you can lose everything you put in. Nothing on this site is financial advice. Always do your own research.
+      Live figures come from third-party sources (DexScreener, GeckoTerminal, Solana RPC) and may be delayed or wrong. © {year} Referral Code community.
+    </p>
+  </div>
+</footer>

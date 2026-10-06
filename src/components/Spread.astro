@@ -1,0 +1,44 @@
+---
+import Icon from './Icon.astro';
+---
+<section class="section">
+  <div class="container-x">
+    <div class="max-w-2xl" data-reveal>
+      <span class="eyebrow"><Icon name="Megaphone" class="size-3.5" /> Spread the code</span>
+      <h2 class="h-section mt-4">The marketing department is you.</h2>
+      <p class="lede">Referrals are the oldest growth hack on the internet. Every time someone types "referral code," we're in the conversation. Make it yours.</p>
+    </div>
+
+    <div class="mt-12 grid gap-4 md:grid-cols-2">
+      <a href="/share" class="card card-lift group relative overflow-hidden bg-gradient-to-br from-brand-700 to-brand-900 text-white" data-reveal>
+        <div class="bg-grid absolute inset-0 opacity-40"></div>
+        <div class="relative">
+          <span class="grid size-12 place-items-center rounded-2xl bg-white/15"><Icon name="IdCard" class="size-6" /></span>
+          <h3 class="mt-6 font-display text-3xl font-bold">Your referral card</h3>
+          <p class="mt-2 max-w-sm text-brand-100">Type your name and get a share-ready image with the live price, plus your own link: <span class="font-mono text-white">referralcode.work/?ref=you</span></p>
+          <span class="mt-8 inline-flex items-center gap-2 font-semibold">Make my card <Icon name="ArrowRight" class="size-4 transition group-hover:translate-x-1" /></span>
+        </div>
+      </a>
+      <a href="/memes" class="card card-lift group relative overflow-hidden" data-reveal>
+        <span class="grid size-12 place-items-center rounded-2xl bg-brand-100 text-brand-800"><Icon name="Laugh" class="size-6" /></span>
+        <h3 class="mt-6 font-display text-3xl font-bold">Meme generator</h3>
+        <p class="mt-2 max-w-sm text-gray-600">Pick a template or upload your own image, add a caption, and post it to X in seconds. Everything runs in your browser.</p>
+        <span class="mt-8 inline-flex items-center gap-2 font-semibold text-brand-800">Make a meme <Icon name="ArrowRight" class="size-4 transition group-hover:translate-x-1" /></span>
+      </a>
+    </div>
+
+    <div class="mt-4 grid gap-4 sm:grid-cols-3">
+      {[
+        ['TrendingUp', 'Search does the work', 'Everyone has typed "referral code" somewhere. The name rides on a phrase people already use every day.'],
+        ['Share2', 'Built to be shared', 'A referral is a recommendation. Every share card is a holder vouching for the coin.'],
+        ['Users', 'Owned by holders', 'No team bag and no VC unlocks. The community runs everything.'],
+      ].map(([icon, title, body]) => (
+        <div class="card p-6" data-reveal>
+          <Icon name={icon} class="size-6 text-brand-700" />
+          <h3 class="mt-4 font-semibold">{title}</h3>
+          <p class="mt-1 text-sm text-gray-600">{body}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

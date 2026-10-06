@@ -1,0 +1,56 @@
+---
+import Icon from './Icon.astro';
+import { NAV, LINKS } from '../config';
+---
+<header class="fixed inset-x-0 top-0 z-50 border-b border-gray-200/80 bg-white/90 backdrop-blur-lg">
+  <nav class="container-x flex h-[72px] items-center justify-between gap-4" aria-label="Main">
+    <a href="/" class="flex items-center gap-2.5" aria-label="Referral Code home">
+      <picture>
+        <source srcset="/logo-72.webp" type="image/webp" />
+        <img src="/logo-72.png" alt="" width="36" height="36" class="size-9" />
+      </picture>
+      <span class="font-display text-xl font-bold tracking-tight">REFERRAL <span class="text-brand-700">CODE</span></span>
+    </a>
+
+    <ul class="hidden items-center gap-1 text-sm font-medium lg:flex">
+      {NAV.map((l) => (
+        <li><a href={l.href} class="rounded-xl px-3 py-2 text-gray-700 hover:bg-gray-100 hover:text-brand-800">{l.label}</a></li>
+      ))}
+    </ul>
+
+    <div class="flex items-center gap-1">
+      <a href={LINKS.x} target="_blank" rel="noopener noreferrer" class="grid size-11 place-items-center rounded-xl hover:bg-gray-100" aria-label="Referral Code on X">
+        <Icon name="x" class="size-[18px]" />
+      </a>
+      <a href={LINKS.telegram} target="_blank" rel="noopener noreferrer" class="grid size-11 place-items-center rounded-xl hover:bg-gray-100" aria-label="Referral Code on Telegram">
+        <Icon name="telegram" class="size-5" />
+      </a>
+      <a href="/#buy" class="btn-primary ml-2 hidden min-h-11 px-5 text-sm sm:inline-flex">Buy $REFERRAL</a>
+      <button id="menu-btn" type="button" class="grid size-11 place-items-center rounded-xl hover:bg-gray-100 lg:hidden" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
+        <Icon name="Menu" class="size-6" />
+      </button>
+    </div>
+  </nav>
+
+  <div id="mobile-menu" hidden class="border-t border-gray-200 bg-white lg:hidden">
+    <ul class="container-x flex flex-col py-3 text-lg font-medium">
+      {NAV.map((l) => (
+        <li><a href={l.href} class="block rounded-xl px-3 py-3.5 hover:bg-gray-50">{l.label}</a></li>
+      ))}
+      <li class="pt-2 pb-3"><a href="/#buy" class="btn-primary w-full">Buy $REFERRAL</a></li>
+    </ul>
+  </div>
+</header>
+
+<script>
+  const btn = document.getElementById('menu-btn')!;
+  const menu = document.getElementById('mobile-menu')!;
+  const set = (open: boolean) => {
+    menu.hidden = !open;
+    btn.setAttribute('aria-expanded', String(open));
+    btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  };
+  btn.addEventListener('click', () => set(menu.hidden !== false));
+  menu.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a')) set(false); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) { set(false); btn.focus(); } });
+</script>

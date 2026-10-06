@@ -1,0 +1,192 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+
+const themes = [
+  { key: 'green', label: 'Green', swatch: 'bg-gradient-to-br from-brand-600 to-brand-900' },
+  { key: 'light', label: 'Light', swatch: 'bg-white border border-gray-300' },
+  { key: 'night', label: 'Night', swatch: 'bg-gradient-to-br from-gray-800 to-black' },
+];
+---
+<Base title="Make your referral card • $REFERRAL" description="Create a share-ready $REFERRAL card with your name, the live price and your personal referral link.">
+  <section class="pt-[72px]">
+    <div class="container-x py-12 lg:py-16">
+      <div class="max-w-2xl">
+        <span class="eyebrow"><Icon name="IdCard" class="size-3.5" /> Share card</span>
+        <h1 class="mt-4 font-display text-4xl font-bold tracking-tight sm:text-5xl">Your personal referral card.</h1>
+        <p class="lede">Put your name on it, grab your link, and post it. Anyone who opens your link sees that you sent them.</p>
+      </div>
+
+      <div class="mt-10 grid items-start gap-8 lg:grid-cols-[380px_1fr]">
+        <form id="card-form" class="card space-y-6" autocomplete="off" onsubmit="return false">
+          <div>
+            <label for="ref-name" class="mb-2 block font-semibold">Your name or handle</label>
+            <input id="ref-name" class="input" maxlength="24" placeholder="e.g. satoshi" />
+            <p class="mt-2 text-sm text-gray-500">Letters, numbers, spaces, <code>. _ -</code>. Up to 24 characters.</p>
+          </div>
+
+          <fieldset>
+            <legend class="mb-2 font-semibold">Style</legend>
+            <div class="grid grid-cols-3 gap-2">
+              {themes.map((t, i) => (
+                <label class="cursor-pointer">
+                  <input type="radio" name="theme" value={t.key} class="peer sr-only" checked={i === 0} />
+                  <span class="flex flex-col items-center gap-2 rounded-2xl border-2 border-transparent p-2 text-sm font-medium peer-checked:border-brand-600 peer-focus-visible:outline-2 peer-focus-visible:outline-brand-600">
+                    <span class={`h-10 w-full rounded-xl ${t.swatch}`}></span>{t.label}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          <label class="flex items-center justify-between gap-4">
+            <span class="font-semibold">Show live price</span>
+            <input id="show-price" type="checkbox" checked class="size-5 accent-brand-700" />
+          </label>
+
+          <div class="rounded-2xl bg-gray-50 p-4">
+            <div class="text-xs font-semibold uppercase tracking-widest text-gray-500">Your link</div>
+            <div id="ref-link" class="mt-1 break-all font-mono text-sm">referralcode.work</div>
+          </div>
+        </form>
+
+        <div class="space-y-4">
+          <div class="overflow-hidden rounded-3xl border border-gray-200 bg-gray-100 shadow-sm">
+            <canvas id="card" width="1200" height="630" class="block h-auto w-full" role="img" aria-label="Preview of your referral card"></canvas>
+          </div>
+          <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <button type="button" id="btn-share" class="btn-primary"><Icon name="Share2" class="size-5" /> Share image</button>
+            <a id="btn-x" href="#" target="_blank" rel="noopener noreferrer" class="btn-ghost"><Icon name="x" class="size-4" /> Post on X</a>
+            <button type="button" id="btn-download" class="btn-ghost"><Icon name="Download" class="size-5" /> Download PNG</button>
+            <button type="button" id="btn-copy" class="btn-ghost"><Icon name="Link" class="size-5" /> Copy link</button>
+          </div>
+          <p class="text-sm text-gray-500">Tip: on desktop, download the image first, then attach it to your X post. On phones, "Share image" sends it straight to the X app.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { ensureFonts, FONTS, grid, logoBadge, roundRect, fitText, download, shareImage } from '../lib/canvas';
+  import { fetchMarket, type Market } from '../lib/market';
+  import { cleanRef, price, pct } from '../lib/format';
+  import { copyText, toast, xIntent } from '../lib/ui';
+  import { SITE, TOKEN } from '../config';
+
+  const canvas = document.getElementById('card') as HTMLCanvasElement;
+  const ctx = canvas.getContext('2d')!;
+  const nameInput = document.getElementById('ref-name') as HTMLInputElement;
+  const priceToggle = document.getElementById('show-price') as HTMLInputElement;
+  const linkEl = document.getElementById('ref-link')!;
+  const xBtn = document.getElementById('btn-x') as HTMLAnchorElement;
+  let market: Market | null = null;
+
+  const W = 1200, H = 630;
+  const THEMES = {
+    green: { bg: ['#16a34a', '#14532d'], grid: 'rgba(255,255,255,.07)', text: '#ffffff', sub: '#bbf7d0', coupon: 'rgba(255,255,255,.12)', couponBorder: 'rgba(255,255,255,.55)', accent: '#ffffff', chip: 'rgba(0,0,0,.22)' },
+    light: { bg: ['#ffffff', '#f0fdf4'], grid: 'rgba(21,128,61,.08)', text: '#0b1a10', sub: '#4b5563', coupon: '#f0fdf4', couponBorder: '#15803d', accent: '#15803d', chip: '#ffffff' },
+    night: { bg: ['#111827', '#030712'], grid: 'rgba(74,222,128,.08)', text: '#ffffff', sub: '#9ca3af', coupon: 'rgba(34,197,94,.10)', couponBorder: '#22c55e', accent: '#4ade80', chip: 'rgba(255,255,255,.08)' },
+  } as const;
+  type ThemeKey = keyof typeof THEMES;
+
+  const getName = () => cleanRef(nameInput.value);
+  const refUrl = (n: string | null) => (n ? `${SITE.url}/?ref=${encodeURIComponent(n)}` : SITE.url);
+  const shareText = (n: string | null) => `${n ? `${n} here. ` : ''}Use my referral code: ${TOKEN.ticker} on Solana 🤝`;
+
+  async function draw() {
+    const theme = THEMES[(document.querySelector<HTMLInputElement>('input[name=theme]:checked')?.value ?? 'green') as ThemeKey];
+    const name = getName();
+    const code = (name ?? 'YOURNAME').toUpperCase().replace(/\s+/g, '');
+
+    const bg = ctx.createLinearGradient(0, 0, W, H);
+    bg.addColorStop(0, theme.bg[0]); bg.addColorStop(1, theme.bg[1]);
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+    grid(ctx, W, H, 48, theme.grid);
+
+    // Brand row
+    ctx.fillStyle = theme.text;
+    ctx.font = `700 34px ${FONTS.display}`;
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText('REFERRAL', 72, 104);
+    const rw = ctx.measureText('REFERRAL ').width;
+    ctx.fillStyle = theme.accent === '#ffffff' ? '#bbf7d0' : theme.accent;
+    ctx.fillText('CODE', 72 + rw, 104);
+
+    // Headline
+    ctx.fillStyle = theme.sub;
+    ctx.font = `600 30px ${FONTS.body}`;
+    ctx.fillText(name ? `${name} is referring you to` : 'You have been referred to', 72, 196);
+    ctx.fillStyle = theme.text;
+    ctx.font = `700 104px ${FONTS.display}`;
+    ctx.fillText(TOKEN.ticker, 66, 300);
+
+    // Coupon with the "code"
+    const cx = 72, cy = 344, cw = 640, ch = 118;
+    roundRect(ctx, cx, cy, cw, ch, 24);
+    ctx.fillStyle = theme.coupon; ctx.fill();
+    ctx.setLineDash([14, 10]); ctx.lineWidth = 3; ctx.strokeStyle = theme.couponBorder; ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = theme.sub;
+    ctx.font = `600 20px ${FONTS.body}`;
+    ctx.fillText('REFERRAL CODE', cx + 32, cy + 42);
+    const { lines, size } = fitText(ctx, code, (s) => `700 ${s}px ${FONTS.mono}`, cw - 64, 52, 26, 1);
+    ctx.fillStyle = theme.text;
+    ctx.font = `700 ${size}px ${FONTS.mono}`;
+    ctx.fillText(lines[0] ?? '', cx + 32, cy + 92);
+
+    // Price chip
+    if (priceToggle.checked && market?.priceUsd) {
+      const txt = price(market.priceUsd, false);
+      const ch24 = market.change.h24;
+      ctx.font = `700 30px ${FONTS.display}`;
+      const tw = ctx.measureText(txt).width;
+      ctx.font = `600 22px ${FONTS.body}`;
+      const chTxt = ch24 === null ? '' : `${pct(ch24)} 24h`;
+      const cw2 = ctx.measureText(chTxt).width;
+      const w = 32 + tw + (chTxt ? 20 + cw2 : 0) + 32;
+      roundRect(ctx, 72, 492, w, 64, 32);
+      ctx.fillStyle = theme.chip; ctx.fill();
+      ctx.fillStyle = theme.text; ctx.font = `700 30px ${FONTS.display}`;
+      ctx.fillText(txt, 104, 535);
+      if (chTxt) {
+        ctx.font = `600 22px ${FONTS.body}`;
+        ctx.fillStyle = ch24! >= 0 ? (theme.accent === '#ffffff' ? '#bbf7d0' : theme.accent) : '#f87171';
+        ctx.fillText(chTxt, 104 + tw + 20, 533);
+      }
+    }
+
+    // Link
+    ctx.fillStyle = theme.sub;
+    ctx.font = `600 24px ${FONTS.body}`;
+    ctx.textAlign = 'right';
+    ctx.fillText(refUrl(name).replace(/^https:\/\//, ''), W - 72, H - 56);
+    ctx.textAlign = 'left';
+
+    await logoBadge(ctx, 960, 270, 170);
+
+    linkEl.textContent = refUrl(name).replace(/^https:\/\//, '');
+    xBtn.href = xIntent(shareText(name), refUrl(name));
+  }
+
+  const fileName = () => `referral-card-${(getName() ?? 'me').replace(/\s+/g, '-').toLowerCase()}.png`;
+
+  document.getElementById('card-form')!.addEventListener('input', () => draw());
+  document.getElementById('btn-download')!.addEventListener('click', () => download(canvas, fileName()));
+  document.getElementById('btn-copy')!.addEventListener('click', async () => {
+    const ok = await copyText(refUrl(getName()));
+    toast(ok ? 'Referral link copied' : 'Copy failed', ok ? 'ok' : 'error');
+  });
+  document.getElementById('btn-share')!.addEventListener('click', async () => {
+    const r = await shareImage(canvas, fileName(), shareText(getName()), refUrl(getName()));
+    if (r === 'unsupported') {
+      await download(canvas, fileName());
+      toast('Image downloaded. Attach it to your post.');
+    }
+  });
+
+  try { const saved = cleanRef(localStorage.getItem('card-name')); if (saved) nameInput.value = saved; } catch {}
+  nameInput.addEventListener('change', () => { try { localStorage.setItem('card-name', getName() ?? ''); } catch {} });
+
+  ensureFonts().then(draw);
+  fetchMarket().then((m) => { market = m; draw(); }).catch(() => {});
+</script>

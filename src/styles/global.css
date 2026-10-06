@@ -1,0 +1,53 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/space-grotesk';
+
+@theme {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Space Grotesk Variable', ui-sans-serif, system-ui, sans-serif;
+  --color-brand-50: #f0fdf4;
+  --color-brand-100: #dcfce7;
+  --color-brand-200: #bbf7d0;
+  --color-brand-400: #4ade80;
+  --color-brand-500: #22c55e;
+  --color-brand-600: #16a34a;
+  --color-brand-700: #15803d;
+  --color-brand-800: #166534;
+  --color-brand-900: #14532d;
+  --color-ink: #0b1a10;
+}
+
+@layer base {
+  html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+  body { @apply bg-white font-sans text-ink antialiased; }
+  [id] { scroll-margin-top: 88px; }
+  :focus-visible { @apply outline-2 outline-offset-2 outline-brand-600; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  }
+}
+
+@utility container-x { @apply mx-auto w-full max-w-6xl px-4 sm:px-6; }
+@utility section { @apply py-20 lg:py-28; }
+@utility eyebrow { @apply inline-flex items-center gap-2 rounded-full bg-brand-100 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-widest text-brand-800; }
+@utility h-section { @apply font-display text-4xl font-bold tracking-tight text-balance sm:text-5xl; }
+@utility lede { @apply mt-4 max-w-2xl text-lg text-pretty text-gray-600; }
+@utility card { @apply rounded-3xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8; }
+@utility card-lift { @apply transition duration-300 hover:-translate-y-1 hover:border-brand-400 hover:shadow-xl hover:shadow-brand-500/10; }
+@utility btn { @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl px-6 font-semibold transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60; }
+@utility btn-primary { @apply btn bg-brand-700 text-white shadow-lg shadow-brand-700/25 hover:bg-brand-800; }
+@utility btn-ghost { @apply btn border border-gray-300 bg-white text-ink hover:border-brand-500 hover:text-brand-800; }
+@utility input { @apply min-h-12 w-full rounded-2xl border border-gray-300 bg-white px-4 text-base outline-none transition focus:border-brand-600 focus:ring-4 focus:ring-brand-500/15; }
+@utility skeleton { @apply animate-pulse rounded-lg bg-gray-200; }
+
+/* Reveal-on-scroll (progressive: content is visible without JS) */
+.js [data-reveal] { opacity: 0; transform: translateY(16px); transition: opacity .6s ease, transform .6s ease; }
+.js [data-reveal].is-visible { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .js [data-reveal] { opacity: 1; transform: none; } }
+
+.bg-grid {
+  background-image: linear-gradient(to right, rgb(21 128 61 / .06) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgb(21 128 61 / .06) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
