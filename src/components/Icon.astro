@@ -1,12 +1,12 @@
 ---
 // Inline SVG icons rendered at build time — no icon font, no runtime requests.
 import * as lucide from 'lucide-static';
-import { siX, siTelegram } from 'simple-icons';
+import { siX } from 'simple-icons';
 
 interface Props { name: string; class?: string; label?: string }
 const { name, class: cls = 'size-5', label } = Astro.props;
 
-const brands: Record<string, string> = { x: siX.path, telegram: siTelegram.path };
+const brands: Record<string, string> = { x: siX.path };
 const a11y = label ? `role="img" aria-label="${label}"` : 'aria-hidden="true" focusable="false"';
 
 let svg: string;
