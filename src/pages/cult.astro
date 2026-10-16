@@ -1,0 +1,175 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { LINKS, RANKS, TOKEN } from '../config';
+
+const intent = (text: string) => `https://x.com/intent/post?${new URLSearchParams({ text })}`;
+
+const lore = [
+  { n: 'Chapter 1', title: 'The takeover', body: 'The dev walked away. The holders didn\'t. We took the socials, the site and the name, and kept building. Nobody hands you the code. You take it.' },
+  { n: 'Chapter 2', title: 'Referrals became the meta', body: 'Pump.fun launched what it calls the most rewarding referral program in crypto, and the whole timeline started typing "referral code." There is only one.' },
+  { n: 'Chapter 3', title: 'You', body: 'Every chapter after this is written by whoever shows up. Post your card, frame your PFP, say the words. The next chapter has your name in it.' },
+];
+
+const creed = [
+  'All you need is one referral code.',
+  'Every referral program in crypto is advertising for us.',
+  'Conviction over wallet size.',
+  'Codeholders don\'t drop the code.',
+];
+
+const rituals = [
+  { icon: 'Sunrise', title: 'The morning words', body: 'No "gm." Referrers start the day with "use my code." Every day, on the timeline, no explanation.', cta: 'Say it now', href: intent(`use my code 🤝 ${TOKEN.ticker}`) },
+  { icon: 'IdCard', title: 'The initiation', body: 'Make your referral card and post it with #UseMyCode. That post is your way in.', cta: 'Make my card', href: '/share' },
+  { icon: 'CircleUser', title: 'Wear the code', body: 'Put the frame on your PFP and add your code to your X name, like "satoshi | code: SATOSHI".', cta: 'Frame my PFP', href: '/pfp' },
+  { icon: 'Handshake', title: 'The sign-off', body: 'Every post and every reply ends with 🤝. One emoji, everywhere. People will start to notice it.', cta: null, href: null },
+  { icon: 'Megaphone', title: 'The Code Call', body: 'Weekly, together. When a big account posts about referrals, Referrers show up in the replies with cards and memes. Funny, never spammy.', cta: 'Join the X Community', href: LINKS.xCommunity },
+];
+
+const lexicon = [
+  ['the code', `${TOKEN.ticker}. There is only one.`],
+  ['use my code', 'Good morning. Also hello, goodbye, and congratulations.'],
+  ['Referrer', 'Anyone holding the code.'],
+  ['code-less', 'Someone posting a referral code that isn\'t THE code. We pity them, kindly.'],
+  ['dropping the code', 'Selling. We don\'t talk about it.'],
+  ['Code Call', 'The weekly reply raid.'],
+];
+---
+<Base title="Join the cult • $REFERRAL" description="The lore, rituals and ranks of $REFERRAL. All you need is one referral code.">
+  <section class="relative isolate overflow-hidden bg-gradient-to-br from-brand-700 to-brand-900 pt-[72px] text-white">
+    <div class="bg-grid absolute inset-0 -z-10 opacity-40"></div>
+    <div class="container-x py-20 text-center lg:py-28">
+      <span class="inline-flex items-center gap-2 rounded-full bg-white/15 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-widest">🤝 The Code</span>
+      <h1 class="mx-auto mt-6 max-w-3xl font-display text-5xl font-bold leading-[0.95] tracking-tighter text-balance sm:text-7xl">Join the cult.</h1>
+      <p class="mx-auto mt-6 max-w-xl text-lg text-pretty text-brand-100 sm:text-xl">Everyone on the timeline has a referral code. We have <em>the</em> code. Here's the lore, the rituals and the ranks.</p>
+      <div class="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
+        <a href="#rituals" class="btn min-h-14 bg-white px-8 text-lg text-brand-900 shadow-lg hover:bg-brand-50">Start the rituals <Icon name="ArrowDown" class="size-5" /></a>
+        <a href="/pfp" class="btn min-h-14 border border-white/40 px-8 text-lg text-white hover:bg-white/10"><Icon name="CircleUser" class="size-5" /> Frame my PFP</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="lore" class="section">
+    <div class="container-x">
+      <div class="max-w-2xl" data-reveal>
+        <span class="eyebrow"><Icon name="BookOpen" class="size-3.5" /> The lore</span>
+        <h2 class="h-section mt-4">Nobody hands you the code.</h2>
+      </div>
+      <ol class="mt-12 grid gap-4 md:grid-cols-3">
+        {lore.map((c, i) => (
+          <li class={`card ${i === lore.length - 1 ? 'border-brand-400 bg-brand-50' : ''}`} data-reveal>
+            <div class="text-xs font-semibold uppercase tracking-widest text-brand-700">{c.n}</div>
+            <h3 class="mt-3 font-display text-2xl font-bold">{c.title}</h3>
+            <p class="mt-2 text-gray-600">{c.body}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section id="creed" class="section bg-gray-950 text-white">
+    <div class="container-x">
+      <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-widest text-brand-400" data-reveal><Icon name="Scroll" class="size-3.5" /> The creed</span>
+      <ol class="mt-10 space-y-6">
+        {creed.map((line, i) => (
+          <li class="flex items-baseline gap-5 border-b border-white/10 pb-6 last:border-0" data-reveal>
+            <span class="font-mono text-sm text-brand-400">0{i + 1}</span>
+            <span class="font-display text-3xl font-bold tracking-tight text-balance sm:text-5xl">{line}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section id="rituals" class="section">
+    <div class="container-x">
+      <div class="max-w-2xl" data-reveal>
+        <span class="eyebrow"><Icon name="Flame" class="size-3.5" /> The rituals</span>
+        <h2 class="h-section mt-4">Things Referrers do.</h2>
+        <p class="lede">A cult is just a group of people who do the same weird thing every day. Here's ours.</p>
+      </div>
+      <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {rituals.map((r) => (
+          <div class="card flex flex-col p-6" data-reveal>
+            <span class="grid size-12 place-items-center rounded-2xl bg-brand-100 text-brand-800"><Icon name={r.icon} class="size-6" /></span>
+            <h3 class="mt-5 text-lg font-semibold">{r.title}</h3>
+            <p class="mt-1 text-gray-600">{r.body}</p>
+            {r.cta && r.href && (
+              <a href={r.href} {...(r.href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})} class="mt-auto inline-flex items-center gap-2 pt-5 font-semibold text-brand-800 hover:underline">{r.cta} <Icon name="ArrowRight" class="size-4" /></a>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="ranks" class="section bg-brand-50/60">
+    <div class="container-x">
+      <div class="max-w-2xl" data-reveal>
+        <span class="eyebrow"><Icon name="Trophy" class="size-3.5" /> The ranks</span>
+        <h2 class="h-section mt-4">Earned in public.</h2>
+        <p class="lede">Ranks come from what you do for the code, not how much of it you hold. Claim yours on your PFP, then live up to it.</p>
+      </div>
+      <ol class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {RANKS.map((r, i) => (
+          <li class="card relative overflow-hidden p-6" data-reveal>
+            <div class="flex items-center gap-1" aria-label={`Level ${i + 1} of ${RANKS.length}`}>
+              {RANKS.map((_, j) => <span class={`h-1.5 flex-1 rounded-full ${j <= i ? 'bg-brand-600' : 'bg-gray-200'}`}></span>)}
+            </div>
+            <div class="mt-5 font-mono text-xs font-semibold uppercase tracking-widest text-gray-500">Rank {i + 1}</div>
+            <h3 class="mt-1 font-display text-2xl font-bold">{r.name}</h3>
+            <p class="mt-2 text-sm text-gray-600">{r.how}</p>
+          </li>
+        ))}
+      </ol>
+      <div class="mt-8" data-reveal>
+        <a href="/pfp" class="btn-primary"><Icon name="CircleUser" class="size-5" /> Put my rank on my PFP</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="lexicon" class="section">
+    <div class="container-x grid gap-12 lg:grid-cols-[1fr_1.5fr]">
+      <div data-reveal>
+        <span class="eyebrow"><Icon name="MessageSquareQuote" class="size-3.5" /> The lexicon</span>
+        <h2 class="h-section mt-4">Talk like a Referrer.</h2>
+      </div>
+      <dl class="divide-y divide-gray-200 border-y border-gray-200" data-reveal>
+        {lexicon.map(([term, def]) => (
+          <div class="grid gap-1 py-5 sm:grid-cols-[180px_1fr] sm:gap-6">
+            <dt class="font-mono font-semibold text-brand-800">"{term}"</dt>
+            <dd class="text-gray-700">{def}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <section class="section pt-0">
+    <div class="container-x">
+      <div class="card relative overflow-hidden bg-gradient-to-br from-brand-700 to-brand-900 text-white" data-reveal>
+        <div class="bg-grid absolute inset-0 opacity-40"></div>
+        <div class="relative">
+          <h2 class="font-display text-3xl font-bold tracking-tight sm:text-4xl">Four steps in.</h2>
+          <ol class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              ['Get the code', 'Buy $REFERRAL on this site.', '/#buy'],
+              ['Make your card', 'Your name, your link, your Pump.fun code.', '/share'],
+              ['Wear the code', 'Frame your PFP with your rank.', '/pfp'],
+              ['Say the words', 'Post it with #UseMyCode 🤝', intent(`I'm in. use my code 🤝 ${TOKEN.ticker} #UseMyCode`)],
+            ].map(([t, b, href], i) => (
+              <li>
+                <a href={href} {...(href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})} class="group block h-full rounded-2xl bg-white/10 p-5 transition hover:bg-white/15">
+                  <div class="font-mono text-sm text-brand-200">0{i + 1}</div>
+                  <div class="mt-2 flex items-center gap-2 text-lg font-semibold">{t} <Icon name="ArrowRight" class="size-4 transition group-hover:translate-x-1" /></div>
+                  <p class="mt-1 text-sm text-brand-100">{b}</p>
+                </a>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+      <p class="mt-6 text-xs text-gray-500">It's a meme, not a promise. {TOKEN.ticker} is a community meme coin with no team and no roadmap. Only use money you can afford to lose.</p>
+    </div>
+  </section>
+</Base>

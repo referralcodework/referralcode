@@ -41,7 +41,17 @@ export const NAV = [
   { href: '/#trust', label: 'Trust' },
   { href: '/#live', label: 'Live' },
   { href: '/#buy', label: 'Buy' },
+  { href: '/cult', label: 'Cult' },
   { href: '/share', label: 'Share card' },
+  { href: '/pfp', label: 'PFP' },
   { href: '/memes', label: 'Memes' },
   { href: '/#faq', label: 'FAQ' },
+] as const;
+
+// Cult ranks: earned in public, shown on PFP frames.
+export const RANKS = [
+  { name: 'Referrer', how: 'Hold the code and post your referral card with #UseMyCode. Welcome in.' },
+  { name: 'Recruiter', how: 'Bring others in. Your card link is out there and people are joining because of it.' },
+  { name: 'Codeholder', how: 'Show up every day: the morning "use my code", the raids, the Code Calls. Conviction, not wallet size.' },
+  { name: 'Code Master', how: 'Make the memes everyone reposts, win contests, get the shoutout from @pumpreferrals.' },
 ] as const;

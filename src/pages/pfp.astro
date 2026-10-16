@@ -1,0 +1,249 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { RANKS } from '../config';
+
+const styles = [
+  { key: 'green', label: 'Green', swatch: 'bg-gradient-to-br from-brand-500 to-brand-900' },
+  { key: 'coupon', label: 'Coupon', swatch: 'bg-white border-2 border-dashed border-brand-700' },
+  { key: 'night', label: 'Night', swatch: 'bg-gradient-to-br from-gray-800 to-black' },
+];
+---
+<Base title="PFP frame • $REFERRAL" description="Put a $REFERRAL frame on your profile picture: pick your rank, frame style and post it. Your photo never leaves your device.">
+  <section class="pt-[72px]">
+    <div class="container-x py-12 lg:py-16">
+      <div class="max-w-2xl">
+        <span class="eyebrow"><Icon name="CircleUser" class="size-3.5" /> PFP frame</span>
+        <h1 class="mt-4 font-display text-4xl font-bold tracking-tight sm:text-5xl">Wear the code.</h1>
+        <p class="lede">Frame your profile picture, pick your rank, and set it on X. Your photo stays on your device. Nothing is uploaded.</p>
+      </div>
+
+      <div class="mt-10 grid items-start gap-8 lg:grid-cols-[1fr_400px]">
+        <div class="lg:order-2">
+          <div class="mx-auto max-w-[560px]">
+            <canvas id="pfp" width="1000" height="1000" class="block aspect-square h-auto w-full cursor-grab touch-none rounded-full shadow-xl shadow-brand-700/15 active:cursor-grabbing" role="img" aria-label="Preview of your framed profile picture"></canvas>
+            <p class="mt-4 text-center text-sm text-gray-500">Drag the photo to position it. X shows profile pictures as circles, just like this preview.</p>
+          </div>
+        </div>
+
+        <form id="pfp-form" class="card space-y-6 lg:order-1" autocomplete="off" onsubmit="return false">
+          <div>
+            <span class="mb-2 block font-semibold">Your photo</span>
+            <label class="btn-ghost w-full cursor-pointer">
+              <Icon name="Upload" class="size-5" /> <span id="upload-label">Upload a photo</span>
+              <input id="upload" type="file" accept="image/*" class="sr-only" />
+            </label>
+            <label for="zoom" class="mt-4 flex items-center gap-3 text-sm font-medium text-gray-600">
+              <Icon name="ZoomOut" class="size-4 shrink-0" />
+              <input id="zoom" type="range" min="1" max="3" step="0.01" value="1" class="w-full accent-brand-700" aria-label="Zoom" />
+              <Icon name="ZoomIn" class="size-4 shrink-0" />
+            </label>
+          </div>
+
+          <fieldset>
+            <legend class="mb-2 font-semibold">Rank</legend>
+            <div class="grid grid-cols-2 gap-2">
+              {RANKS.map((r, i) => (
+                <label class="cursor-pointer">
+                  <input type="radio" name="rank" value={r.name} class="peer sr-only" checked={i === 0} />
+                  <span class="block rounded-2xl border-2 border-gray-200 px-3 py-3 text-center text-sm font-semibold peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-focus-visible:outline-2 peer-focus-visible:outline-brand-600">{r.name}</span>
+                </label>
+              ))}
+            </div>
+            <p class="mt-2 text-sm text-gray-500"><a href="/cult#ranks" class="font-semibold text-brand-800 underline-offset-2 hover:underline">How ranks are earned</a></p>
+          </fieldset>
+
+          <fieldset>
+            <legend class="mb-2 font-semibold">Frame</legend>
+            <div class="grid grid-cols-3 gap-2">
+              {styles.map((s, i) => (
+                <label class="cursor-pointer">
+                  <input type="radio" name="style" value={s.key} class="peer sr-only" checked={i === 0} />
+                  <span class="flex flex-col items-center gap-2 rounded-2xl border-2 border-transparent p-2 text-sm font-medium peer-checked:border-brand-600 peer-focus-visible:outline-2 peer-focus-visible:outline-brand-600">
+                    <span class={`size-10 rounded-full ${s.swatch}`}></span>{s.label}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          <label class="flex items-center justify-between gap-4">
+            <span class="font-semibold">Show logo badge</span>
+            <input id="show-badge" type="checkbox" checked class="size-5 accent-brand-700" />
+          </label>
+
+          <div class="grid grid-cols-2 gap-2 border-t border-gray-200 pt-6">
+            <button type="button" id="btn-download" class="btn-primary col-span-2"><Icon name="Download" class="size-5" /> Download PFP</button>
+            <button type="button" id="btn-share" class="btn-ghost"><Icon name="Share2" class="size-5" /> Share</button>
+            <a id="btn-x" href="#" target="_blank" rel="noopener noreferrer" class="btn-ghost"><Icon name="x" class="size-4" /> Post</a>
+          </div>
+          <p class="text-sm text-gray-500">Then on X: Profile → Edit profile → tap your photo → choose the downloaded image.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { ensureFonts, FONTS, loadImage, download, shareImage } from '../lib/canvas';
+  import { toast, xIntent } from '../lib/ui';
+  import { SITE, TOKEN } from '../config';
+
+  const S = 1000, C = S / 2;
+  const R_OUT = 500, R_IN = 418, R_TEXT = 459;
+  const canvas = document.getElementById('pfp') as HTMLCanvasElement;
+  const ctx = canvas.getContext('2d')!;
+  const upload = document.getElementById('upload') as HTMLInputElement;
+  const zoom = document.getElementById('zoom') as HTMLInputElement;
+  const badgeToggle = document.getElementById('show-badge') as HTMLInputElement;
+  const xBtn = document.getElementById('btn-x') as HTMLAnchorElement;
+
+  let photo: HTMLImageElement | null = null;
+  let offX = 0, offY = 0; // photo pan, in canvas px
+
+  const STYLES = {
+    green: { band: ['#22c55e', '#14532d'], text: '#ffffff', edge: 'rgba(255,255,255,.35)', dash: false },
+    coupon: { band: ['#ffffff', '#f0fdf4'], text: '#15803d', edge: '#15803d', dash: true },
+    night: { band: ['#111827', '#030712'], text: '#4ade80', edge: 'rgba(74,222,128,.55)', dash: false },
+  } as const;
+  type StyleKey = keyof typeof STYLES;
+
+  const val = (name: string) => document.querySelector<HTMLInputElement>(`input[name=${name}]:checked`)!.value;
+
+  /** Text along a circle, centred on `angle` (radians, 0 = right, PI/2 = bottom). Bottom text is drawn upright. */
+  function arcText(text: string, r: number, angle: number, bottom: boolean, spacing: number) {
+    const chars = [...text];
+    const widths = chars.map((ch) => ctx.measureText(ch).width);
+    const total = widths.reduce((a, b) => a + b, 0) + spacing * (chars.length - 1);
+    const dir = bottom ? -1 : 1; // bottom text runs right-to-left in angle so it reads upright
+    let a = angle - (dir * total) / (2 * r);
+    ctx.save();
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    chars.forEach((ch, i) => {
+      a += (dir * widths[i]) / (2 * r);
+      ctx.save();
+      ctx.translate(C + r * Math.cos(a), C + r * Math.sin(a));
+      ctx.rotate(a + (bottom ? -Math.PI / 2 : Math.PI / 2));
+      ctx.fillText(ch, 0, 0);
+      ctx.restore();
+      a += (dir * (widths[i] / 2 + spacing)) / r;
+    });
+    ctx.restore();
+  }
+
+  function clampPan(img: HTMLImageElement, scale: number) {
+    const d = R_IN * 2;
+    const base = Math.max(d / img.width, d / img.height) * scale;
+    const maxX = Math.max(0, (img.width * base - d) / 2);
+    const maxY = Math.max(0, (img.height * base - d) / 2);
+    offX = Math.min(maxX, Math.max(-maxX, offX));
+    offY = Math.min(maxY, Math.max(-maxY, offY));
+    return base;
+  }
+
+  async function draw() {
+    const st = STYLES[val('style') as StyleKey];
+    const rank = val('rank');
+    ctx.clearRect(0, 0, S, S);
+
+    // Band (fills the whole square so corners look right if X ever shows it square)
+    const g = ctx.createLinearGradient(0, 0, S, S);
+    g.addColorStop(0, st.band[0]); g.addColorStop(1, st.band[1]);
+    ctx.fillStyle = g; ctx.fillRect(0, 0, S, S);
+
+    // Photo (or the logo as a stand-in), cover-fit inside the inner circle
+    const img = photo ?? (await loadImage('/logo.png'));
+    const scale = photo ? parseFloat(zoom.value) : 1;
+    const base = clampPan(img, scale);
+    ctx.save();
+    ctx.beginPath(); ctx.arc(C, C, R_IN, 0, Math.PI * 2); ctx.clip();
+    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, S, S);
+    const w = img.width * base, h = img.height * base;
+    ctx.drawImage(img, C - w / 2 + offX, C - h / 2 + offY, w, h);
+    ctx.restore();
+
+    // Ring edges
+    ctx.save();
+    ctx.strokeStyle = st.edge;
+    ctx.lineWidth = st.dash ? 5 : 4;
+    if (st.dash) ctx.setLineDash([18, 12]);
+    ctx.beginPath(); ctx.arc(C, C, R_IN, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(C, C, R_OUT - 12, 0, Math.PI * 2); ctx.stroke();
+    ctx.restore();
+
+    // Ring text: brand on top, rank on the bottom
+    ctx.fillStyle = st.text;
+    ctx.font = `700 44px ${FONTS.display}`;
+    arcText(`${TOKEN.ticker} • USE MY CODE`, R_TEXT, -Math.PI / 2, false, 3);
+    arcText(rank.toUpperCase(), R_TEXT, Math.PI / 2, true, 5);
+    // Dots on the sides, between the two phrases
+    for (const a of [0, Math.PI]) {
+      ctx.beginPath(); ctx.arc(C + R_TEXT * Math.cos(a), C + R_TEXT * Math.sin(a), 7, 0, Math.PI * 2); ctx.fill();
+    }
+
+    // Logo badge, bottom-right, overlapping the ring
+    if (badgeToggle.checked) {
+      const bx = C + 352 * Math.cos(Math.PI / 4), by = C + 352 * Math.sin(Math.PI / 4), br = 92;
+      const logo = await loadImage('/logo.png');
+      ctx.save();
+      ctx.shadowColor = 'rgba(0,0,0,.3)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 6;
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath(); ctx.arc(bx, by, br, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+      ctx.save();
+      ctx.lineWidth = 8; ctx.strokeStyle = '#15803d';
+      ctx.beginPath(); ctx.arc(bx, by, br - 4, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(bx, by, br - 10, 0, Math.PI * 2); ctx.clip();
+      const s = (br - 10) * 1.8;
+      ctx.drawImage(logo, bx - s / 2, by - s / 2, s, s);
+      ctx.restore();
+    }
+
+    xBtn.href = xIntent(`New PFP. Rank: ${rank}. Use my code 🤝 ${TOKEN.ticker} #UseMyCode`, `${SITE.url}/pfp`);
+  }
+
+  // Drag to pan
+  let drag: { x: number; y: number } | null = null;
+  const toCanvas = () => S / canvas.getBoundingClientRect().width;
+  canvas.addEventListener('pointerdown', (e) => {
+    if (!photo) return;
+    drag = { x: e.clientX, y: e.clientY };
+    canvas.setPointerCapture(e.pointerId);
+  });
+  canvas.addEventListener('pointermove', (e) => {
+    if (!drag) return;
+    const k = toCanvas();
+    offX += (e.clientX - drag.x) * k;
+    offY += (e.clientY - drag.y) * k;
+    drag = { x: e.clientX, y: e.clientY };
+    draw();
+  });
+  const endDrag = () => { drag = null; };
+  canvas.addEventListener('pointerup', endDrag);
+  canvas.addEventListener('pointercancel', endDrag);
+
+  upload.addEventListener('change', () => {
+    const f = upload.files?.[0];
+    if (!f) return;
+    if (!f.type.startsWith('image/')) return toast('Please choose an image file', 'error');
+    const img = new Image();
+    img.onload = () => {
+      photo = img; offX = 0; offY = 0; zoom.value = '1';
+      document.getElementById('upload-label')!.textContent = 'Change photo';
+      draw();
+    };
+    img.onerror = () => toast("Couldn't read that image", 'error');
+    img.src = URL.createObjectURL(f);
+    upload.value = '';
+  });
+
+  document.getElementById('pfp-form')!.addEventListener('input', () => draw());
+  document.getElementById('btn-download')!.addEventListener('click', () => download(canvas, 'referral-pfp.png'));
+  document.getElementById('btn-share')!.addEventListener('click', async () => {
+    const r = await shareImage(canvas, 'referral-pfp.png', `New PFP. Use my code 🤝 ${TOKEN.ticker} #UseMyCode`, `${SITE.url}/pfp`);
+    if (r === 'unsupported') { await download(canvas, 'referral-pfp.png'); toast('PFP downloaded. Set it as your profile picture on X.'); }
+  });
+
+  ensureFonts().then(draw);
+</script>
