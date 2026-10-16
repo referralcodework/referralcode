@@ -1,0 +1,80 @@
+---
+import Icon from './Icon.astro';
+
+// Static snapshots of the posts (text + images self-hosted in /public/x) — no X widget script.
+const pumpfun = {
+  url: 'https://x.com/Pumpfun/status/2111167411647099077',
+  name: 'Pump.fun',
+  handle: 'Pumpfun',
+  avatar: '/x/pumpfun.jpg',
+  avatarShape: 'rounded-xl',
+  date: 'Oct 16, 2026',
+  text: 'The MOST REWARDING referral program in crypto’s history.\n\nWe’re giving away ALL of the Pumpfun App’s revenue via rewards!\n\n- Your referral deposits $50 → both of you get $50 on top\n- ~10% reduced fees for your referrals\n- Referrers get a limited-time 4x boost\n\nLearn more 👇',
+};
+
+const alon = {
+  url: 'https://x.com/a1lon9/status/2111168024065540192',
+  name: 'alon',
+  handle: 'a1lon9',
+  avatar: '/x/alon.jpg',
+  avatarShape: 'rounded-full',
+  date: 'Oct 16, 2026',
+  text: 'We’ve been thinking a lot about how to grow the Pumpfun app to 10 million users in the fastest way possible.\n\nAfter dedicating significant resources to building the most performant product in the market and introducing crypto’s most novel rewards system in callout rewards, the…',
+};
+
+const posts = [
+  { ...pumpfun, media: true, quote: false },
+  { ...alon, media: false, quote: true },
+];
+---
+<section id="on-x" class="section bg-brand-50/60">
+  <div class="container-x">
+    <div class="max-w-2xl" data-reveal>
+      <span class="eyebrow"><Icon name="x" class="size-3" /> Seen on X</span>
+      <h2 class="h-section mt-4">Referrals are the meta now.</h2>
+      <p class="lede">Pump.fun just launched what it calls the most rewarding referral program in crypto, and Alon shared why. The whole timeline is typing "referral code." We already own the name.</p>
+    </div>
+
+    <div class="mt-12 grid gap-4 md:grid-cols-2">
+      {posts.map((p) => (
+        <a href={p.url} target="_blank" rel="noopener noreferrer" class="card card-lift group flex flex-col" data-reveal aria-label={`Read ${p.name}'s post on X`}>
+          <div class="flex items-center gap-3">
+            <img src={p.avatar} alt="" width="48" height="48" loading="lazy" decoding="async" class={`size-12 shrink-0 ${p.avatarShape} border border-gray-200 object-cover`} />
+            <div class="min-w-0 flex-1 leading-tight">
+              <div class="truncate font-semibold">{p.name}</div>
+              <div class="truncate text-sm text-gray-500">@{p.handle} · {p.date}</div>
+            </div>
+            <Icon name="x" class="size-5 shrink-0 text-gray-900" />
+          </div>
+
+          <p class="mt-5 whitespace-pre-line text-[15px] leading-relaxed text-gray-800">{p.text}</p>
+
+          {p.media && (
+            <div class="relative mt-5 aspect-video overflow-hidden rounded-2xl border border-gray-200 bg-white">
+              <img src="/x/pumpfun-video.jpg" alt="Pump.fun referral program video" width="1200" height="675" loading="lazy" decoding="async" class="size-full object-cover transition duration-500 group-hover:scale-[1.03]" />
+              <span class="absolute inset-0 grid place-items-center">
+                <span class="grid size-14 place-items-center rounded-full bg-brand-700 text-white shadow-lg shadow-brand-700/30 transition group-hover:scale-110"><Icon name="Play" class="ml-0.5 size-6 fill-current" /></span>
+              </span>
+              <span class="absolute bottom-3 left-3 rounded-md bg-black/70 px-1.5 py-0.5 font-mono text-xs text-white">0:33</span>
+            </div>
+          )}
+
+          {p.quote && (
+            <div class="mt-5 rounded-2xl border border-gray-200 bg-gray-50/80 p-4">
+              <div class="flex items-center gap-2 text-sm">
+                <img src={pumpfun.avatar} alt="" width="20" height="20" loading="lazy" decoding="async" class="size-5 rounded-md" />
+                <span class="font-semibold">{pumpfun.name}</span>
+                <span class="truncate text-gray-500">@{pumpfun.handle}</span>
+              </div>
+              <p class="mt-1.5 line-clamp-2 text-sm text-gray-700">The MOST REWARDING referral program in crypto’s history. We’re giving away ALL of the Pumpfun App’s revenue via rewards!</p>
+            </div>
+          )}
+
+          <span class="mt-auto inline-flex items-center gap-2 pt-6 font-semibold text-brand-800">{p.quote ? 'Read the full post' : 'Watch on X'} <Icon name="ArrowUpRight" class="size-4 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5" /></span>
+        </a>
+      ))}
+    </div>
+
+    <p class="mt-6 text-xs text-gray-500">Posts shown for context and link to the originals on X. $REFERRAL is a community token and is not affiliated with Pump.fun.</p>
+  </div>
+</section>
