@@ -25,6 +25,12 @@ const themes = [
             <p class="mt-2 text-sm text-gray-500">Letters, numbers, spaces, <code>. _ -</code>. Up to 24 characters.</p>
           </div>
 
+          <div>
+            <label for="pump-code" class="mb-2 block font-semibold">Your Pump.fun referral code <span class="font-normal text-gray-500">(optional)</span></label>
+            <input id="pump-code" class="input font-mono" maxlength="32" placeholder="e.g. satoshi" autocapitalize="off" spellcheck="false" />
+            <p class="mt-2 text-sm text-gray-500">Find it in the Pump.fun app under your profile's rewards. It goes on your card and in your link, so people you refer can sign up with it.</p>
+          </div>
+
           <fieldset>
             <legend class="mb-2 font-semibold">Style</legend>
             <div class="grid grid-cols-3 gap-2">
@@ -70,13 +76,14 @@ const themes = [
 <script>
   import { ensureFonts, FONTS, grid, logoBadge, roundRect, fitText, download, shareImage } from '../lib/canvas';
   import { fetchMarket, type Market } from '../lib/market';
-  import { cleanRef, price, pct } from '../lib/format';
+  import { cleanRef, cleanPumpCode, price, pct } from '../lib/format';
   import { copyText, toast, xIntent } from '../lib/ui';
   import { SITE, TOKEN } from '../config';
 
   const canvas = document.getElementById('card') as HTMLCanvasElement;
   const ctx = canvas.getContext('2d')!;
   const nameInput = document.getElementById('ref-name') as HTMLInputElement;
+  const pumpInput = document.getElementById('pump-code') as HTMLInputElement;
   const priceToggle = document.getElementById('show-price') as HTMLInputElement;
   const linkEl = document.getElementById('ref-link')!;
   const xBtn = document.getElementById('btn-x') as HTMLAnchorElement;
@@ -91,8 +98,19 @@ const themes = [
   type ThemeKey = keyof typeof THEMES;
 
   const getName = () => cleanRef(nameInput.value);
-  const refUrl = (n: string | null) => (n ? `${SITE.url}/?ref=${encodeURIComponent(n)}` : SITE.url);
-  const shareText = (n: string | null) => `All you need is one referral code: ${TOKEN.ticker} on Solana 🤝${n ? ` (from ${n})` : ''}`;
+  const getPump = () => cleanPumpCode(pumpInput.value);
+  const refUrl = (n: string | null) => {
+    const p = new URLSearchParams();
+    if (n) p.set('ref', n);
+    const pf = getPump();
+    if (pf) p.set('pf', pf);
+    const q = p.toString();
+    return q ? `${SITE.url}/?${q}` : SITE.url;
+  };
+  const shareText = (n: string | null) => {
+    const pf = getPump();
+    return `All you need is one referral code: ${TOKEN.ticker} on Solana 🤝${n ? ` (from ${n})` : ''}${pf ? `\n\nJoining Pump.fun? Use my referral code: ${pf}` : ''}`;
+  };
 
   async function draw() {
     const theme = THEMES[(document.querySelector<HTMLInputElement>('input[name=theme]:checked')?.value ?? 'green') as ThemeKey];
@@ -164,6 +182,24 @@ const themes = [
 
     await logoBadge(ctx, 960, 270, 170);
 
+    // Pump.fun code chip, under the logo
+    const pf = getPump();
+    if (pf) {
+      const px = 960, py = 468, pw = 340, ph = 72;
+      roundRect(ctx, px - pw / 2, py, pw, ph, 20);
+      ctx.fillStyle = theme.chip; ctx.fill();
+      ctx.lineWidth = 2; ctx.strokeStyle = theme.couponBorder; ctx.stroke();
+      ctx.textAlign = 'center';
+      ctx.fillStyle = theme.sub;
+      ctx.font = `600 16px ${FONTS.body}`;
+      ctx.fillText('PUMP.FUN CODE', px, py + 26);
+      const fit = fitText(ctx, pf, (s) => `700 ${s}px ${FONTS.mono}`, pw - 40, 28, 16, 1);
+      ctx.fillStyle = theme.text;
+      ctx.font = `700 ${fit.size}px ${FONTS.mono}`;
+      ctx.fillText(fit.lines[0] ?? '', px, py + 58);
+      ctx.textAlign = 'left';
+    }
+
     linkEl.textContent = refUrl(name).replace(/^https:\/\//, '');
     xBtn.href = xIntent(shareText(name), refUrl(name));
   }
@@ -186,6 +222,8 @@ const themes = [
 
   try { const saved = cleanRef(localStorage.getItem('card-name')); if (saved) nameInput.value = saved; } catch {}
   nameInput.addEventListener('change', () => { try { localStorage.setItem('card-name', getName() ?? ''); } catch {} });
+  try { const saved = cleanPumpCode(localStorage.getItem('card-pump')); if (saved) pumpInput.value = saved; } catch {}
+  pumpInput.addEventListener('change', () => { try { localStorage.setItem('card-pump', getPump() ?? ''); } catch {} });
 
   ensureFonts().then(draw);
   fetchMarket().then((m) => { market = m; draw(); }).catch(() => {});

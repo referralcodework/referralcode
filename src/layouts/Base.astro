@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
+import Icon from '../components/Icon.astro';
 import { SITE, LINKS, TOKEN } from '../config';
 
 interface Props { title?: string; description?: string; path?: string }
@@ -58,7 +59,12 @@ const jsonLd = {
     <div id="ref-banner" hidden class="fixed inset-x-0 top-[72px] z-40 px-4">
       <div class="mx-auto flex max-w-xl items-center gap-3 rounded-2xl border border-brand-200 bg-brand-50/95 px-4 py-3 text-sm text-brand-900 shadow-lg backdrop-blur">
         <span class="text-xl" aria-hidden="true">🤝</span>
-        <p class="flex-1"><strong data-ref-name></strong> referred you to {TOKEN.ticker}. Welcome to the movement.</p>
+        <div class="flex-1">
+          <p><strong data-ref-name></strong> referred you to {TOKEN.ticker}. Welcome to the movement.</p>
+          <p data-pf hidden class="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1">Joining Pump.fun? Use their code
+            <button type="button" data-pf-copy class="inline-flex items-center gap-1.5 rounded-lg border border-brand-300 bg-white px-2 py-0.5 font-mono font-semibold hover:border-brand-600" aria-label="Copy Pump.fun referral code"><span data-pf-code></span><Icon name="Copy" class="size-3.5 text-brand-700" /></button>
+          </p>
+        </div>
         <button type="button" data-ref-close class="grid size-9 place-items-center rounded-xl hover:bg-brand-100" aria-label="Dismiss">✕</button>
       </div>
     </div>
@@ -68,17 +74,30 @@ const jsonLd = {
     <Footer />
 
     <script>
-      import { cleanRef } from '../lib/format';
+      import { cleanRef, cleanPumpCode } from '../lib/format';
+      import { copyText, toast } from '../lib/ui';
 
       // Referral welcome: shown on the page a ?ref=name link lands on, then gets out of the way.
+      // With a Pump.fun code (&pf=) it stays until dismissed so there's time to copy the code.
       const banner = document.getElementById('ref-banner');
-      const ref = cleanRef(new URLSearchParams(location.search).get('ref'));
-      if (banner && ref) {
-        banner.querySelector('[data-ref-name]')!.textContent = ref;
+      const params = new URLSearchParams(location.search);
+      const ref = cleanRef(params.get('ref'));
+      const pf = cleanPumpCode(params.get('pf'));
+      if (banner && (ref || pf)) {
+        banner.querySelector('[data-ref-name]')!.textContent = ref ?? 'A holder';
         banner.hidden = false;
         const close = () => { banner.hidden = true; };
         banner.querySelector('[data-ref-close]')!.addEventListener('click', close);
-        setTimeout(close, 10_000);
+        if (pf) {
+          banner.querySelector('[data-pf-code]')!.textContent = pf;
+          banner.querySelector<HTMLElement>('[data-pf]')!.hidden = false;
+          banner.querySelector('[data-pf-copy]')!.addEventListener('click', async () => {
+            const ok = await copyText(pf);
+            toast(ok ? 'Pump.fun code copied' : 'Copy failed', ok ? 'ok' : 'error');
+          });
+        } else {
+          setTimeout(close, 10_000);
+        }
       }
 
       // Reveal-on-scroll

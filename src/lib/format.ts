@@ -40,3 +40,10 @@ export function cleanRef(v: string | null | undefined): string | null {
   const s = v.normalize('NFKC').replace(/[^\p{L}\p{N}_ .-]/gu, '').trim().slice(0, 24);
   return s.length ? s : null;
 }
+
+/** Pump.fun referral codes: no spaces, letters/numbers/_ - only. */
+export function cleanPumpCode(v: string | null | undefined): string | null {
+  if (!v) return null;
+  const s = v.normalize('NFKC').replace(/[^\p{L}\p{N}_-]/gu, '').slice(0, 32);
+  return s.length ? s : null;
+}
