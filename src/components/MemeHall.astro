@@ -3,17 +3,42 @@ import Icon from './Icon.astro';
 import PumpPill from './PumpPill.astro';
 import { TOKEN } from '../config';
 
-// Only coins launched on Pump.fun. Logos self-hosted in /public/coins; market caps filled live from DexScreener.
-const coins = [
-  { file: 'fartcoin', name: 'Fartcoin', ticker: 'FARTCOIN', mint: '9BB6NFEcjBCtnNLFko2FqVQBq8HHM13kCyYcdQbgpump', bg: 'bg-candy-yellow', tilt: '-rotate-2' },
-  { file: 'pnut', name: 'Peanut the Squirrel', ticker: 'PNUT', mint: '2qEHjDLDLbuBgRYvsxhc5D6uDWAivNFZGan56P1tpump', bg: 'bg-candy-orange', tilt: 'rotate-1' },
-  { file: 'goat', name: 'Goatseus Maximus', ticker: 'GOAT', mint: 'CzLSujWBLFsSjncfkh59rUFqvafWcY5tzedWJSuypump', bg: 'bg-candy-sky', tilt: '-rotate-1' },
-  { file: 'moodeng', name: 'Moo Deng', ticker: 'MOODENG', mint: 'ED5nyyWEzpPPiWimP8vYm7sD7TD3LAt3Q3gRTWHzPJBY', bg: 'bg-candy-pink', tilt: 'rotate-2' },
-  { file: 'chillguy', name: 'Just a chill guy', ticker: 'CHILLGUY', mint: 'Df6yfrKC8kZE3KNkrHERKzAetSxbrWeniQfyJY4Jpump', bg: 'bg-candy-lime', tilt: 'rotate-1' },
-  { file: 'bert', name: 'Bertram The Pomeranian', ticker: 'BERT', mint: 'HgBRWfYxEfvPhtqkaeymCQtHCrKE46qQ43pKe8HCpump', bg: 'bg-candy-orange', tilt: '-rotate-2' },
-  { file: 'act', name: 'Act I: The AI Prophecy', ticker: 'ACT', mint: 'GJAFwWjJ3vnTsrQVabjBVK2TYB1YtRCQXRDfDgUnpump', bg: 'bg-candy-purple', tilt: 'rotate-2' },
-  { file: 'ufd', name: 'Unicorn Fart Dust', ticker: 'UFD', mint: 'eL5fUxj2J4CiQsmW85k5FG9DvuQjjUoBHoQBi2Kpump', bg: 'bg-candy-sky', tilt: '-rotate-1' },
+// Only coins launched on Pump.fun: every mint ends in "pump" (Pump.fun's vanity suffix), except Moo Deng,
+// a documented Sept 2024 Pump.fun launch from before the suffix. Logos self-hosted in /public/coins;
+// market caps are filled live from DexScreener and the grid re-sorts by them.
+type Kind = 'meme' | 'ai' | 'culture';
+const coins: { file: string; name: string; ticker: string; mint: string; kind: Kind }[] = [
+  { file: 'fartcoin', name: 'Fartcoin', ticker: 'FARTCOIN', mint: '9BB6NFEcjBCtnNLFko2FqVQBq8HHM13kCyYcdQbgpump', kind: 'meme' },
+  { file: 'pnut', name: 'Peanut the Squirrel', ticker: 'PNUT', mint: '2qEHjDLDLbuBgRYvsxhc5D6uDWAivNFZGan56P1tpump', kind: 'meme' },
+  { file: 'moodeng', name: 'Moo Deng', ticker: 'MOODENG', mint: 'ED5nyyWEzpPPiWimP8vYm7sD7TD3LAt3Q3gRTWHzPJBY', kind: 'meme' },
+  { file: 'goat', name: 'Goatseus Maximus', ticker: 'GOAT', mint: 'CzLSujWBLFsSjncfkh59rUFqvafWcY5tzedWJSuypump', kind: 'ai' },
+  { file: 'ban', name: 'Comedian', ticker: 'BAN', mint: '9PR7nCP9DpcUotnDPVLUBUZKu5WAYkwrCUx9wDnSpump', kind: 'culture' },
+  { file: 'jellyjelly', name: 'jelly-my-jelly', ticker: 'JELLYJELLY', mint: 'FeR8VBqNRSUD5NtXAj2n3j1dAHkZHfyDktKuLXD4pump', kind: 'culture' },
+  { file: 'chillguy', name: 'Just a chill guy', ticker: 'CHILLGUY', mint: 'Df6yfrKC8kZE3KNkrHERKzAetSxbrWeniQfyJY4Jpump', kind: 'meme' },
+  { file: 'arc', name: 'AI Rig Complex', ticker: 'ARC', mint: '61V8vBaqAGMpgDQi4JcAwo1dmBGHsyhzodcPqnEVpump', kind: 'ai' },
+  { file: 'alch', name: 'Alchemist AI', ticker: 'ALCH', mint: 'HNg5PYJmtqcmzXrv6S9zP1CDKk5BgDuyFBxbvNApump', kind: 'ai' },
+  { file: 'neet', name: 'NEET', ticker: 'NEET', mint: 'Ce2gx9KGXJ6C9Mp5b5x1sn9Mg87JwEbrQby4Zqo3pump', kind: 'meme' },
+  { file: 'fartboy', name: 'FARTBOY', ticker: 'FARTBOY', mint: 'y1AZt42vceCmStjW4zetK3VoNarC1VxJ5iDjpiupump', kind: 'meme' },
+  { file: 'pippin', name: 'Pippin', ticker: 'PIPPIN', mint: 'Dfh5DzRgSvvCFDoYc2ciTkMrbDfRKybA4SoFbPmApump', kind: 'ai' },
+  { file: 'bert', name: 'Bertram The Pomeranian', ticker: 'BERT', mint: 'HgBRWfYxEfvPhtqkaeymCQtHCrKE46qQ43pKe8HCpump', kind: 'meme' },
+  { file: 'act', name: 'Act I: The AI Prophecy', ticker: 'ACT', mint: 'GJAFwWjJ3vnTsrQVabjBVK2TYB1YtRCQXRDfDgUnpump', kind: 'ai' },
+  { file: 'ava', name: 'Ava AI', ticker: 'AVA', mint: 'DKu9kykSfbN5LBfFXtNNDPaX35o4Fv6vJ9FKk7pZpump', kind: 'ai' },
+  { file: 'vine', name: 'Vine Coin', ticker: 'VINE', mint: '6AJcP7wuLwmRYLBNbi825wgguaPsWzPBEHcHndpRpump', kind: 'culture' },
+  { file: 'swarms', name: 'swarms', ticker: 'SWARMS', mint: '74SBV4zDXxTRgv1pEMoECskKBkZHc2yGPnc7GYVepump', kind: 'ai' },
+  { file: 'ufd', name: 'Unicorn Fart Dust', ticker: 'UFD', mint: 'eL5fUxj2J4CiQsmW85k5FG9DvuQjjUoBHoQBi2Kpump', kind: 'meme' },
+  { file: 'fwog', name: 'FWOG', ticker: 'FWOG', mint: 'A8C3xuqscfmyLrte3VmTqrAq8kgMASius9AFNANwpump', kind: 'meme' },
+  { file: 'usduc', name: 'unstable coin', ticker: 'USDUC', mint: 'CB9dDufT3ZuQXqqSfa1c5kY935TEreyBw9XJXxHKpump', kind: 'meme' },
+  { file: 'chillhouse', name: 'Chill House', ticker: 'CHILLHOUSE', mint: 'GkyPYa7NnCFbduLknCfBfP7p8564X1VZhwZYJ6CZpump', kind: 'meme' },
+  { file: 'jailstool', name: 'Stool Prisondente', ticker: 'JAILSTOOL', mint: 'AxriehR6Xw3adzHopnvMn7GcpRFcD41ddpiTWMg6pump', kind: 'culture' },
+  { file: 'house', name: 'Housecoin', ticker: 'HOUSE', mint: 'DitHyRMQiSDhn5cnKMJV2CDDt6sVct96YrECiM49pump', kind: 'meme' },
+  { file: 'gork', name: 'gork', ticker: 'GORK', mint: '38PgzpJYu2HkiYvV8qePFakB8tuobPdGm2FFEn7Dpump', kind: 'meme' },
+  { file: 'luce', name: 'Luce, Holy Year mascot', ticker: 'LUCE', mint: 'CBdCxKo9QavR9hfShgpEBG3zekorAeD7W1jfq2o3pump', kind: 'culture' },
+  { file: 'moonpig', name: 'moonpig', ticker: 'MOONPIG', mint: 'Ai3eKAWjzKMV8wRwd41nVP83yqfbAVJykhvJVPxspump', kind: 'meme' },
 ];
+const colors = ['bg-candy-yellow', 'bg-candy-orange', 'bg-candy-sky', 'bg-candy-pink', 'bg-candy-lime', 'bg-candy-purple'];
+const tilts = ['-rotate-2', 'rotate-1', '-rotate-1', 'rotate-2', 'rotate-1', '-rotate-1'];
+const kindLabel: Record<Kind, string> = { meme: '🐸 Meme', ai: '🤖 AI agent', culture: '📺 Culture' };
+const filters: [string, string][] = [['all', 'All'], ['meme', '🐸 Memes'], ['ai', '🤖 AI agents'], ['culture', '📺 Culture']];
 ---
 <section id="memes-hall" class="section relative overflow-hidden bg-gradient-to-br from-candy-yellow via-[#ffe58a] to-candy-pink/70">
   <div class="bg-dots absolute inset-0"></div>
@@ -21,24 +46,36 @@ const coins = [
   <PumpPill class="absolute right-6 top-10 hidden size-16 animate-wiggle drop-shadow-[4px_4px_0_#0b1a10] sm:block" color="#ff5fa2" />
 
   <div class="container-x relative">
-    <div class="max-w-2xl" data-reveal>
-      <span class="eyebrow pop-sm bg-white text-ink"><PumpPill class="size-4" /> Pump.fun hall of fame</span>
-      <h2 class="h-section mt-4">From pill to legend.</h2>
-      <p class="lede text-ink/80">Every coin here, from Fartcoin and PNUT to Moo Deng and Chill Guy, started as a little pill on Pump.fun. $REFERRAL was born in the same place. Here's the company we keep.</p>
+    <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+      <div class="max-w-2xl" data-reveal>
+        <span class="eyebrow pop-sm bg-white text-ink"><PumpPill class="size-4" /> Pump.fun hall of fame</span>
+        <h2 class="h-section mt-4">From pill to legend.</h2>
+        <p class="lede text-ink/80">{coins.length} coins that started as a little pill on Pump.fun and made it: memes, AI agents and internet culture. $REFERRAL was born in the same place. Ranked live by market cap.</p>
+      </div>
+      <div class="flex flex-wrap gap-2" role="group" aria-label="Filter coins" data-reveal>
+        {filters.map(([k, label], i) => (
+          <button type="button" data-filter={k} aria-pressed={i === 0 ? 'true' : 'false'} class="pop-sm rounded-full bg-white px-4 py-1.5 text-sm font-bold transition hover:-translate-y-0.5 aria-pressed:bg-ink aria-pressed:text-candy-lime">{label}</button>
+        ))}
+      </div>
     </div>
 
-    <div class="mt-12 grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
-      {coins.map((c) => (
-        <a href={`https://dexscreener.com/solana/${c.mint}`} target="_blank" rel="noopener noreferrer" data-coin={c.mint}
-           class={`pop group relative flex flex-col items-center rounded-3xl p-4 text-center transition hover:-translate-y-1 hover:rotate-0 sm:p-5 ${c.bg} ${c.tilt}`} data-reveal aria-label={`${c.name} on DexScreener`}>
-          <span class="pop-sm absolute -top-3 -right-2 flex items-center gap-1 rounded-full bg-white px-2 py-0.5 text-[11px] font-bold"><PumpPill class="size-3.5" /> pump.fun</span>
-          <img src={`/coins/${c.file}.webp`} alt="" width="96" height="96" loading="lazy" decoding="async" class="pop-sm size-20 rounded-full bg-white object-cover transition duration-300 group-hover:rotate-12 group-hover:scale-110 sm:size-24" />
-          <div class="mt-3 font-display text-lg font-bold leading-tight">${c.ticker}</div>
-          <div class="truncate text-xs font-medium text-ink/70">{c.name}</div>
-          <div class="mt-2 rounded-full bg-ink/90 px-2.5 py-0.5 font-mono text-xs font-bold text-white"><span data-mcap>…</span> mcap</div>
-        </a>
+    <ol data-coin-grid class="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 lg:grid-cols-6">
+      {coins.map((c, i) => (
+        <li data-coin={c.mint} data-kind={c.kind} data-ticker={c.ticker} data-file={c.file}>
+          <a href={`https://dexscreener.com/solana/${c.mint}`} target="_blank" rel="noopener noreferrer"
+             class={`pop-sm group relative flex h-full flex-col items-center rounded-3xl p-3.5 text-center transition hover:-translate-y-1 hover:rotate-0 ${colors[i % colors.length]} ${tilts[i % tilts.length]}`} aria-label={`${c.name} on DexScreener`}>
+            <span data-rank class="absolute -top-2.5 -left-2 grid size-7 place-items-center rounded-full border-2 border-ink bg-white font-mono text-[11px] font-black">{i + 1}</span>
+            <PumpPill class="absolute -top-2 -right-1 size-7 drop-shadow-[2px_2px_0_#0b1a10]" />
+            <img src={`/coins/${c.file}.webp`} alt="" width="80" height="80" loading="lazy" decoding="async" class="size-16 rounded-full border-[3px] border-ink bg-white object-cover transition duration-300 group-hover:rotate-12 group-hover:scale-110 sm:size-[4.5rem]" />
+            <div class="mt-2.5 w-full truncate font-display text-base font-bold leading-tight">${c.ticker}</div>
+            <div class="w-full truncate text-[11px] font-medium text-ink/70">{c.name}</div>
+            <div class="mt-1 text-[10px] font-bold uppercase tracking-wider text-ink/60">{kindLabel[c.kind]}</div>
+            <div class="mt-2 rounded-full bg-ink/90 px-2.5 py-0.5 font-mono text-[11px] font-bold text-white"><span data-mcap>…</span></div>
+          </a>
+        </li>
       ))}
-    </div>
+    </ol>
+    <p class="mt-6 text-xs text-ink/60">Listed for fun and culture, not as recommendations. Most Pump.fun coins go to zero; these are the rare ones that didn't (yet).</p>
 
     <!-- What if calculator -->
     <div class="pop mt-12 grid gap-6 rounded-[2rem] bg-white p-5 sm:p-8 lg:grid-cols-[1fr_1.2fr] lg:items-center" data-reveal>
@@ -49,12 +86,13 @@ const coins = [
           <img data-whatif-logo src="/coins/fartcoin.webp" alt="" width="48" height="48" class="pop-sm size-12 rounded-full bg-white object-cover" />
         </div>
         <h3 class="mt-4 font-display text-3xl font-bold tracking-tight">What if {TOKEN.ticker} had the market cap of…</h3>
-        <div class="mt-4 flex flex-wrap gap-2" role="group" aria-label="Pick a coin">
-          {coins.map((c, i) => (
-            <button type="button" data-whatif={c.mint} data-file={c.file} data-ticker={c.ticker} aria-pressed={i === 0 ? 'true' : 'false'}
-              class="rounded-full border-2 border-ink px-3 py-1 text-sm font-bold transition hover:-translate-y-0.5 aria-pressed:bg-ink aria-pressed:text-candy-lime">${c.ticker}</button>
-          ))}
-        </div>
+        <label class="mt-4 block">
+          <span class="sr-only">Pick a coin</span>
+          <select data-whatif-select class="pop-sm w-full cursor-pointer appearance-none rounded-2xl bg-candy-lime px-4 py-3 font-display text-lg font-bold outline-none">
+            {coins.map((c) => <option value={c.mint} data-file={c.file}>${c.ticker} · {c.name}</option>)}
+          </select>
+        </label>
+        <button type="button" data-whatif-random class="mt-3 inline-flex items-center gap-1.5 text-sm font-bold text-brand-800 hover:underline"><Icon name="Dices" class="size-4" /> Surprise me</button>
       </div>
       <div class="rounded-3xl bg-gradient-to-br from-brand-700 to-brand-900 p-6 text-center text-white sm:p-8">
         <div class="text-xs font-semibold uppercase tracking-widest text-brand-200">{TOKEN.ticker} price would be</div>
@@ -82,7 +120,7 @@ const coins = [
 </div>
 
 <style>
-  .coin-track { animation: coins 36s linear infinite reverse; }
+  .coin-track { animation: coins 90s linear infinite reverse; }
   @keyframes coins { to { transform: translateX(-50%); } }
   @media (prefers-reduced-motion: reduce) { .coin-track { animation: none; } }
 </style>
@@ -91,34 +129,41 @@ const coins = [
   import { usd, price } from '../lib/format';
   import { TOKEN } from '../config';
 
-  const mints = [...document.querySelectorAll<HTMLElement>('[data-coin]')].map((el) => el.dataset.coin!);
+  const grid = document.querySelector<HTMLElement>('[data-coin-grid]')!;
+  const items = [...grid.querySelectorAll<HTMLElement>('[data-coin]')];
+  const select = document.querySelector<HTMLSelectElement>('[data-whatif-select]')!;
   const caps = new Map<string, number>();
-  let selected = document.querySelector<HTMLButtonElement>('[data-whatif]')?.dataset.whatif ?? '';
+  let ourPrice = 0;
 
   function renderWhatIf() {
     const ours = caps.get(TOKEN.mint);
-    const theirs = caps.get(selected);
+    const theirs = caps.get(select.value);
+    const opt = select.selectedOptions[0];
+    document.querySelector<HTMLImageElement>('[data-whatif-logo]')!.src = `/coins/${opt.dataset.file}.webp`;
     const priceEl = document.querySelector('[data-whatif-price]')!;
     const xEl = document.querySelector('[data-whatif-x]')!;
-    if (!ours || !theirs) { priceEl.textContent = '—'; xEl.textContent = 'loading caps'; return; }
-    const ourPrice = caps.get(`${TOKEN.mint}:price`)!;
+    if (!ours || !theirs || !ourPrice) { priceEl.textContent = '—'; xEl.textContent = 'loading caps'; return; }
     const x = theirs / ours;
     priceEl.textContent = price(ourPrice * x);
     xEl.textContent = `${x >= 100 ? Math.round(x).toLocaleString('en-US') : x.toFixed(1)}x`;
   }
+  select.addEventListener('change', renderWhatIf);
+  document.querySelector('[data-whatif-random]')!.addEventListener('click', () => {
+    select.selectedIndex = Math.floor(Math.random() * select.options.length);
+    renderWhatIf();
+  });
 
-  document.querySelectorAll<HTMLButtonElement>('[data-whatif]').forEach((btn) => {
+  // Filters
+  document.querySelectorAll<HTMLButtonElement>('[data-filter]').forEach((btn) => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('[data-whatif]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
-      selected = btn.dataset.whatif!;
-      document.querySelector<HTMLImageElement>('[data-whatif-logo]')!.src = `/coins/${btn.dataset.file}.webp`;
-      renderWhatIf();
+      document.querySelectorAll('[data-filter]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      for (const li of items) li.hidden = btn.dataset.filter !== 'all' && li.dataset.kind !== btn.dataset.filter;
     });
   });
 
   (async () => {
     try {
-      const res = await fetch(`https://api.dexscreener.com/tokens/v1/solana/${[...mints, TOKEN.mint].join(',')}`);
+      const res = await fetch(`https://api.dexscreener.com/tokens/v1/solana/${[...items.map((li) => li.dataset.coin), TOKEN.mint].join(',')}`);
       const pairs: { baseToken: { address: string }; marketCap?: number; fdv?: number; priceUsd?: string; liquidity?: { usd?: number } }[] = await res.json();
       // Keep the deepest pair per token.
       const best = new Map<string, (typeof pairs)[number]>();
@@ -129,12 +174,17 @@ const coins = [
       for (const [mint, p] of best) {
         const cap = p.marketCap ?? p.fdv;
         if (cap) caps.set(mint, cap);
-        if (mint === TOKEN.mint && p.priceUsd) caps.set(`${mint}:price`, Number(p.priceUsd));
+        if (mint === TOKEN.mint && p.priceUsd) ourPrice = Number(p.priceUsd);
       }
     } catch { /* leave placeholders */ }
-    document.querySelectorAll<HTMLElement>('[data-coin]').forEach((el) => {
-      el.querySelector('[data-mcap]')!.textContent = usd(caps.get(el.dataset.coin!));
-    });
+
+    for (const li of items) li.querySelector('[data-mcap]')!.textContent = `${usd(caps.get(li.dataset.coin!))} mcap`;
+    // Rank by live market cap (unknown caps sink to the bottom, original order kept).
+    if (caps.size) {
+      [...items]
+        .sort((a, b) => (caps.get(b.dataset.coin!) ?? -1) - (caps.get(a.dataset.coin!) ?? -1))
+        .forEach((li, i) => { li.querySelector('[data-rank]')!.textContent = String(i + 1); grid.appendChild(li); });
+    }
     renderWhatIf();
   })();
 </script>

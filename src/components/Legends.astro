@@ -3,16 +3,33 @@ import Icon from './Icon.astro';
 import PumpPill from './PumpPill.astro';
 
 // Shout-outs only: avatars self-hosted in /public/legends. Nobody here is affiliated with $REFERRAL.
-const legends = [
-  { name: 'Ansem', handle: 'blknoiz06', avatar: 'ansem', rarity: 'Legendary', role: 'The Black Bull', blurb: 'The most famous caller of the Solana meme cycle. When the bull posts, the timeline moves.', bg: 'from-candy-yellow via-candy-orange to-candy-pink' },
-  { name: 'Mitch', handle: 'idrawline', avatar: 'mitch', rarity: 'Legendary', role: 'Draws the line', blurb: 'Solana meme OG known for drawing the line on the chart and sticking to it.', bg: 'from-candy-sky via-candy-purple to-candy-pink' },
-  { name: 'cented', handle: 'Cented7', avatar: 'cented', rarity: 'Legendary', role: 'The hodler', blurb: 'One of the most-watched wallets on Solana. Pure trench warfare, live.', bg: 'from-candy-lime via-brand-400 to-candy-sky' },
-  { name: 'Orangie', handle: 'orangie', avatar: 'orangie', rarity: 'Caller', role: 'Lifemaxxing', blurb: 'YouTuber who buys coins on camera and brings a whole army with him.', bg: 'from-candy-orange via-candy-yellow to-candy-lime' },
-  { name: 'Frank', handle: 'frankdegods', avatar: 'frank', rarity: 'OG', role: 'DeGods founder', blurb: 'Built one of the biggest communities on Solana before memes were cool.', bg: 'from-candy-purple via-candy-pink to-candy-orange' },
-  { name: 'threadguy', handle: 'notthreadguy', avatar: 'threadguy', rarity: 'Caller', role: 'Live at 8:30am EST', blurb: 'The morning show of the trenches. Every day, live, every coin.', bg: 'from-candy-pink via-candy-purple to-candy-sky' },
-  { name: 'alon', handle: 'a1lon9', avatar: 'alon', rarity: 'Founder', role: 'Co-founder of Pump.fun', blurb: 'Built the pill factory every coin on this page came out of.', bg: 'from-brand-400 via-candy-lime to-candy-yellow', pump: true },
+// Handles verified on X; blurbs stick to what each person says about themselves or is publicly known for.
+type Group = 'caller' | 'streamer' | 'builder';
+const legends: { name: string; handle: string; avatar: string; rarity: string; group: Group; role: string; blurb: string; live?: boolean; pump?: boolean }[] = [
+  { name: 'Ansem', handle: 'blknoiz06', avatar: 'ansem', rarity: 'Legendary', group: 'caller', role: 'The Black Bull', blurb: 'The most famous caller of the Solana meme cycle. When the bull posts, the timeline moves.' },
+  { name: 'Mitch', handle: 'idrawline', avatar: 'mitch', rarity: 'Legendary', group: 'caller', role: 'Draws the line', blurb: 'Solana meme OG known for drawing the line on the chart and sticking to it.', live: false },
+  { name: 'cented', handle: 'Cented7', avatar: 'cented', rarity: 'Legendary', group: 'caller', role: 'The hodler', blurb: 'One of the most-watched traders in the trenches. Pure trench warfare.' },
+  { name: 'Unipcs', handle: 'theunipcs', avatar: 'unipcs', rarity: 'Legendary', group: 'caller', role: 'aka "Bonk Guy"', blurb: 'One of the loudest, most loyal meme believers on the Solana timeline.' },
+  { name: 'Cupsey', handle: 'Cupseyy', avatar: 'cupsey', rarity: 'Caller', group: 'caller', role: 'Trench grinder', blurb: 'New day, new money to be made. A top trencher everyone watches.' },
+  { name: 'gake', handle: 'Ga__ke', avatar: 'gake', rarity: 'Caller', group: 'caller', role: 'Trench veteran', blurb: 'Big-conviction meme trader with one of the largest followings in the trenches.' },
+  { name: 'Crash', handle: 'CrashiusClay69', avatar: 'crash', rarity: 'Caller', group: 'caller', role: 'Early, not late', blurb: 'Says he doesn’t pump coins, he buys them before they go up a lot. Fair.' },
+  { name: 'pow', handle: 'traderpow', avatar: 'pow', rarity: 'Caller', group: 'caller', role: 'Makes the wins count', blurb: 'Loses many times, wins a few, and makes them count. The honest trader.' },
+  { name: 'kook', handle: 'KookCapitalLLC', avatar: 'kook', rarity: 'Caller', group: 'caller', role: 'The Kook Letter', blurb: 'Trader, writer and one of the funniest accounts in crypto.' },
+  { name: 'gainzy', handle: 'gainzy222', avatar: 'gainzy', rarity: 'Caller', group: 'caller', role: 'Professional pastry eater', blurb: 'Timeline legend. Calls coins, eats pastries, posts through it.' },
+  { name: 'Orangie', handle: 'orangie', avatar: 'orangie', rarity: 'Streamer', group: 'streamer', role: 'Lifemaxxing', blurb: 'YouTuber who buys coins on camera and brings a whole army with him.' },
+  { name: 'threadguy', handle: 'notthreadguy', avatar: 'threadguy', rarity: 'Streamer', group: 'streamer', role: 'Live at 8:30am EST', blurb: 'The morning show of the trenches. Every day, live, every coin.' },
+  { name: 'Jakey', handle: 'SolJakey', avatar: 'jakey', rarity: 'Streamer', group: 'streamer', role: 'Live on Kick', blurb: 'Streams the trenches live. What a time to be alive.' },
+  { name: 'rasmr', handle: 'rasmr_eth', avatar: 'rasmr', rarity: 'Streamer', group: 'streamer', role: 'Live on Twitch', blurb: 'Trades memecoins live on stream for everyone to watch.' },
+  { name: 'toly', handle: 'toly', avatar: 'toly', rarity: 'Founder', group: 'builder', role: 'Co-founder of Solana', blurb: 'Built the chain the whole meme casino runs on.' },
+  { name: 'raj', handle: 'rajgokal', avatar: 'raj', rarity: 'Founder', group: 'builder', role: 'Co-founder of Solana', blurb: 'Solana accelerationist and giga-techno-optimist.' },
+  { name: 'alon', handle: 'a1lon9', avatar: 'alon', rarity: 'Founder', group: 'builder', role: 'Co-founder of Pump.fun', blurb: 'Built the pill factory every coin in our hall of fame came out of.', pump: true },
+  { name: 'meow', handle: 'weremeow', avatar: 'meow', rarity: 'Founder', group: 'builder', role: 'Founder of Jupiter', blurb: 'Built the swap a huge share of Solana trades through. Harness the chaos.' },
+  { name: 'mert', handle: 'mert', avatar: 'mert', rarity: 'Founder', group: 'builder', role: 'CEO of Helius', blurb: 'Runs the RPCs the trenches rely on. Bare-knuckle typist.' },
+  { name: 'Frank', handle: 'frankdegods', avatar: 'frank', rarity: 'OG', group: 'builder', role: 'DeGods founder', blurb: 'Built one of the biggest communities on Solana before memes were cool.' },
 ];
-const rarityColor: Record<string, string> = { Legendary: 'bg-candy-yellow', OG: 'bg-candy-purple text-white', Caller: 'bg-candy-sky', Founder: 'bg-candy-lime' };
+const gradients = ['from-candy-yellow via-candy-orange to-candy-pink', 'from-candy-sky via-candy-purple to-candy-pink', 'from-candy-lime via-brand-400 to-candy-sky', 'from-candy-orange via-candy-yellow to-candy-lime', 'from-candy-purple via-candy-pink to-candy-orange', 'from-candy-pink via-candy-purple to-candy-sky', 'from-brand-400 via-candy-lime to-candy-yellow'];
+const rarityColor: Record<string, string> = { Legendary: 'bg-candy-yellow', OG: 'bg-candy-purple text-white', Caller: 'bg-candy-sky', Streamer: 'bg-candy-pink', Founder: 'bg-candy-lime' };
+const filters: [string, string][] = [['all', `All ${legends.length}`], ['caller', '📞 Callers'], ['streamer', '🎥 Streamers'], ['builder', '🛠️ Builders']];
 ---
 <section id="legends" class="section relative overflow-hidden bg-ink text-white">
   <div class="bg-confetti absolute inset-0 opacity-40"></div>
@@ -23,22 +40,28 @@ const rarityColor: Record<string, string> = { Legendary: 'bg-candy-yellow', OG: 
     <div class="max-w-2xl" data-reveal>
       <span class="eyebrow bg-white/10 text-candy-yellow"><Icon name="Crown" class="size-3.5" /> Legends & callers</span>
       <h2 class="h-section mt-4">The Solana trenches hall of fame.</h2>
-      <p class="lede text-white/70">Every cycle has its legends. These are the names the whole timeline knows: the callers, the OGs and the builders who turned Solana into the meme capital of crypto.</p>
+      <p class="lede text-white/70">Every cycle has its legends. These are the names the whole timeline knows: the callers, the streamers and the builders who turned Solana into the meme capital of crypto.</p>
+    </div>
+
+    <div class="mt-8 flex flex-wrap gap-2" role="group" aria-label="Filter legends" data-reveal>
+      {filters.map(([k, label], i) => (
+        <button type="button" data-legend-filter={k} aria-pressed={i === 0 ? 'true' : 'false'} class="rounded-full border-2 border-white/30 px-4 py-1.5 text-sm font-bold transition hover:-translate-y-0.5 hover:border-white aria-pressed:border-candy-lime aria-pressed:bg-candy-lime aria-pressed:text-ink">{label}</button>
+      ))}
     </div>
 
     <div class="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
       {legends.map((l, i) => {
-        const Tag = l.handle === 'idrawline' ? 'div' : 'a';
+        const Tag = l.live === false ? 'div' : 'a';
         const link = Tag === 'a' ? { href: `https://x.com/${l.handle}`, target: '_blank', rel: 'noopener noreferrer', 'aria-label': `${l.name} on X` } : {};
         return (
-          <Tag {...link} class={`legend group relative rounded-[1.75rem] bg-gradient-to-br p-1.5 shadow-[6px_6px_0_#000] transition duration-300 hover:-translate-y-2 hover:rotate-0 ${l.bg} ${i % 2 ? 'rotate-1' : '-rotate-1'}`} data-reveal>
+          <Tag {...link} class={`legend group relative rounded-[1.75rem] bg-gradient-to-br p-1.5 shadow-[6px_6px_0_#000] transition duration-300 hover:-translate-y-2 hover:rotate-0 ${gradients[i % gradients.length]} ${i % 2 ? 'rotate-1' : '-rotate-1'}`} data-group={l.group}>
             <div class="relative h-full overflow-hidden rounded-[1.4rem] bg-ink/90 p-5">
               <div class="holo pointer-events-none absolute inset-0 opacity-0 transition duration-500 group-hover:opacity-100"></div>
               <div class="relative flex items-center justify-between">
                 <span class={`rounded-full px-2.5 py-0.5 text-[11px] font-black tracking-widest text-ink uppercase ${rarityColor[l.rarity]}`}>{l.rarity}</span>
                 <span class="font-mono text-xs text-white/50">#{String(i + 1).padStart(3, '0')}</span>
               </div>
-              <div class={`relative mx-auto mt-4 size-28 rounded-full bg-gradient-to-br p-1 ${l.bg}`}>
+              <div class={`relative mx-auto mt-4 size-28 rounded-full bg-gradient-to-br p-1 ${gradients[i % gradients.length]}`}>
                 {l.avatar
                   ? <img src={`/legends/${l.avatar}.webp`} alt="" width="112" height="112" loading="lazy" decoding="async" class="size-full rounded-full border-4 border-ink object-cover transition duration-300 group-hover:scale-105" />
                   : <span class="grid size-full place-items-center rounded-full border-4 border-ink bg-candy-sky font-display text-5xl font-bold text-ink" aria-hidden="true">M</span>}
@@ -57,7 +80,7 @@ const rarityColor: Record<string, string> = { Legendary: 'bg-candy-yellow', OG: 
       })}
 
       <!-- Your card -->
-      <a href="/pfp" class="group flex flex-col items-center justify-center rounded-[1.75rem] border-4 border-dashed border-white/30 p-6 text-center transition hover:-translate-y-2 hover:border-candy-lime" data-reveal>
+      <a href="/pfp" data-group="you" class="group flex flex-col items-center justify-center rounded-[1.75rem] border-4 border-dashed border-white/30 p-6 text-center transition hover:-translate-y-2 hover:border-candy-lime" data-reveal>
         <span class="grid size-24 place-items-center rounded-full bg-white/10 text-5xl transition group-hover:scale-110" aria-hidden="true">🫵</span>
         <div class="mt-4 font-display text-2xl font-bold">Next legend: you</div>
         <p class="mt-2 text-sm text-white/70">Every legend started with one post. Make your $REFERRAL PFP and start calling.</p>
@@ -68,6 +91,17 @@ const rarityColor: Record<string, string> = { Legendary: 'bg-candy-yellow', OG: 
     <p class="mt-8 text-xs text-white/50">A fan shout-out. None of these people are affiliated with $REFERRAL or have endorsed it. Nothing here is financial advice.</p>
   </div>
 </section>
+
+<script>
+  const cards = document.querySelectorAll<HTMLElement>('#legends [data-group]');
+  document.querySelectorAll<HTMLButtonElement>('[data-legend-filter]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-legend-filter]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      const f = btn.dataset.legendFilter;
+      cards.forEach((c) => { c.hidden = f !== 'all' && c.dataset.group !== f && c.dataset.group !== 'you'; });
+    });
+  });
+</script>
 
 <style>
   .holo {
