@@ -1,0 +1,140 @@
+---
+import Icon from './Icon.astro';
+import PumpPill from './PumpPill.astro';
+import { TOKEN } from '../config';
+
+// Logos self-hosted in /public/coins. Market caps are filled live from DexScreener.
+const coins = [
+  { file: 'fartcoin', name: 'Fartcoin', ticker: 'FARTCOIN', mint: '9BB6NFEcjBCtnNLFko2FqVQBq8HHM13kCyYcdQbgpump', pump: true, bg: 'bg-candy-yellow', tilt: '-rotate-2' },
+  { file: 'pnut', name: 'Peanut the Squirrel', ticker: 'PNUT', mint: '2qEHjDLDLbuBgRYvsxhc5D6uDWAivNFZGan56P1tpump', pump: true, bg: 'bg-candy-orange', tilt: 'rotate-1' },
+  { file: 'goat', name: 'Goatseus Maximus', ticker: 'GOAT', mint: 'CzLSujWBLFsSjncfkh59rUFqvafWcY5tzedWJSuypump', pump: true, bg: 'bg-candy-sky', tilt: '-rotate-1' },
+  { file: 'moodeng', name: 'Moo Deng', ticker: 'MOODENG', mint: 'ED5nyyWEzpPPiWimP8vYm7sD7TD3LAt3Q3gRTWHzPJBY', pump: true, bg: 'bg-candy-pink', tilt: 'rotate-2' },
+  { file: 'chillguy', name: 'Just a chill guy', ticker: 'CHILLGUY', mint: 'Df6yfrKC8kZE3KNkrHERKzAetSxbrWeniQfyJY4Jpump', pump: true, bg: 'bg-candy-lime', tilt: 'rotate-1' },
+  { file: 'bonk', name: 'Bonk', ticker: 'BONK', mint: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263', pump: false, bg: 'bg-candy-orange', tilt: '-rotate-2' },
+  { file: 'wif', name: 'dogwifhat', ticker: 'WIF', mint: 'EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm', pump: false, bg: 'bg-candy-purple', tilt: 'rotate-2' },
+  { file: 'popcat', name: 'Popcat', ticker: 'POPCAT', mint: '7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr', pump: false, bg: 'bg-candy-sky', tilt: '-rotate-1' },
+];
+---
+<section id="memes-hall" class="section relative overflow-hidden bg-gradient-to-br from-candy-yellow via-[#ffe58a] to-candy-pink/70">
+  <div class="bg-dots absolute inset-0"></div>
+  <PumpPill class="absolute -left-6 top-16 size-24 animate-float-slow opacity-90 drop-shadow-[5px_5px_0_#0b1a10]" />
+  <PumpPill class="absolute right-6 top-10 hidden size-16 animate-wiggle drop-shadow-[4px_4px_0_#0b1a10] sm:block" color="#ff5fa2" />
+
+  <div class="container-x relative">
+    <div class="max-w-2xl" data-reveal>
+      <span class="eyebrow pop-sm bg-white text-ink"><PumpPill class="size-4" /> Pump.fun hall of fame</span>
+      <h2 class="h-section mt-4">From pill to legend.</h2>
+      <p class="lede text-ink/80">Fartcoin, PNUT, GOAT, Moo Deng and Chill Guy all started as a little pill on Pump.fun. $REFERRAL was born in the same place. Here's the company we keep.</p>
+    </div>
+
+    <div class="mt-12 grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
+      {coins.map((c) => (
+        <a href={`https://dexscreener.com/solana/${c.mint}`} target="_blank" rel="noopener noreferrer" data-coin={c.mint}
+           class={`pop group relative flex flex-col items-center rounded-3xl p-4 text-center transition hover:-translate-y-1 hover:rotate-0 sm:p-5 ${c.bg} ${c.tilt}`} data-reveal aria-label={`${c.name} on DexScreener`}>
+          {c.pump && <span class="pop-sm absolute -top-3 -right-2 flex items-center gap-1 rounded-full bg-white px-2 py-0.5 text-[11px] font-bold"><PumpPill class="size-3.5" /> pump.fun</span>}
+          <img src={`/coins/${c.file}.webp`} alt="" width="96" height="96" loading="lazy" decoding="async" class="pop-sm size-20 rounded-full bg-white object-cover transition duration-300 group-hover:rotate-12 group-hover:scale-110 sm:size-24" />
+          <div class="mt-3 font-display text-lg font-bold leading-tight">${c.ticker}</div>
+          <div class="truncate text-xs font-medium text-ink/70">{c.name}</div>
+          <div class="mt-2 rounded-full bg-ink/90 px-2.5 py-0.5 font-mono text-xs font-bold text-white"><span data-mcap>…</span> mcap</div>
+        </a>
+      ))}
+    </div>
+
+    <!-- What if calculator -->
+    <div class="pop mt-12 grid gap-6 rounded-[2rem] bg-white p-5 sm:p-8 lg:grid-cols-[1fr_1.2fr] lg:items-center" data-reveal>
+      <div>
+        <div class="flex items-center gap-3">
+          <img src="/logo-72.png" alt="" width="48" height="48" class="pop-sm size-12 rounded-full bg-white" />
+          <span class="font-display text-3xl font-bold text-ink/30">→</span>
+          <img data-whatif-logo src="/coins/fartcoin.webp" alt="" width="48" height="48" class="pop-sm size-12 rounded-full bg-white object-cover" />
+        </div>
+        <h3 class="mt-4 font-display text-3xl font-bold tracking-tight">What if {TOKEN.ticker} had the market cap of…</h3>
+        <div class="mt-4 flex flex-wrap gap-2" role="group" aria-label="Pick a coin">
+          {coins.map((c, i) => (
+            <button type="button" data-whatif={c.mint} data-file={c.file} data-ticker={c.ticker} aria-pressed={i === 0 ? 'true' : 'false'}
+              class="rounded-full border-2 border-ink px-3 py-1 text-sm font-bold transition hover:-translate-y-0.5 aria-pressed:bg-ink aria-pressed:text-candy-lime">${c.ticker}</button>
+          ))}
+        </div>
+      </div>
+      <div class="rounded-3xl bg-gradient-to-br from-brand-700 to-brand-900 p-6 text-center text-white sm:p-8">
+        <div class="text-xs font-semibold uppercase tracking-widest text-brand-200">{TOKEN.ticker} price would be</div>
+        <div data-whatif-price class="mt-1 font-display text-5xl font-bold tabular-nums sm:text-6xl">…</div>
+        <div class="mt-3 inline-flex items-center gap-2 rounded-full bg-candy-lime px-4 py-1.5 font-display text-2xl font-bold text-ink">
+          <Icon name="Rocket" class="size-5" /> <span data-whatif-x>…</span>
+        </div>
+        <p class="mt-4 text-xs text-brand-200">Just math with live market caps. Not a prediction, not financial advice.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Logo ticker -->
+<div class="overflow-hidden border-y-4 border-ink bg-ink py-4" aria-hidden="true">
+  <div class="coin-track flex w-max items-center">
+    {[0, 1].map(() => [...coins, null].map((c) => (
+      <span class="flex items-center gap-3 pr-10 font-display text-xl font-bold whitespace-nowrap text-white">
+        {c ? <img src={`/coins/${c.file}.webp`} alt="" width="40" height="40" loading="lazy" class="size-10 rounded-full border-2 border-white" /> : <img src="/logo-72.png" alt="" width="40" height="40" class="size-10 rounded-full border-2 border-candy-lime bg-white" />}
+        <span class={c ? '' : 'text-candy-lime'}>${c ? c.ticker : 'REFERRAL'}</span>
+        <PumpPill class="size-6" color={c?.pump === false ? '#ffd23f' : '#5fcf8a'} />
+      </span>
+    )))}
+  </div>
+</div>
+
+<style>
+  .coin-track { animation: coins 36s linear infinite reverse; }
+  @keyframes coins { to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) { .coin-track { animation: none; } }
+</style>
+
+<script>
+  import { usd, price } from '../lib/format';
+  import { TOKEN } from '../config';
+
+  const mints = [...document.querySelectorAll<HTMLElement>('[data-coin]')].map((el) => el.dataset.coin!);
+  const caps = new Map<string, number>();
+  let selected = document.querySelector<HTMLButtonElement>('[data-whatif]')?.dataset.whatif ?? '';
+
+  function renderWhatIf() {
+    const ours = caps.get(TOKEN.mint);
+    const theirs = caps.get(selected);
+    const priceEl = document.querySelector('[data-whatif-price]')!;
+    const xEl = document.querySelector('[data-whatif-x]')!;
+    if (!ours || !theirs) { priceEl.textContent = '—'; xEl.textContent = 'loading caps'; return; }
+    const ourPrice = caps.get(`${TOKEN.mint}:price`)!;
+    const x = theirs / ours;
+    priceEl.textContent = price(ourPrice * x);
+    xEl.textContent = `${x >= 100 ? Math.round(x).toLocaleString('en-US') : x.toFixed(1)}x`;
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('[data-whatif]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-whatif]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      selected = btn.dataset.whatif!;
+      document.querySelector<HTMLImageElement>('[data-whatif-logo]')!.src = `/coins/${btn.dataset.file}.webp`;
+      renderWhatIf();
+    });
+  });
+
+  (async () => {
+    try {
+      const res = await fetch(`https://api.dexscreener.com/tokens/v1/solana/${[...mints, TOKEN.mint].join(',')}`);
+      const pairs: { baseToken: { address: string }; marketCap?: number; fdv?: number; priceUsd?: string; liquidity?: { usd?: number } }[] = await res.json();
+      // Keep the deepest pair per token.
+      const best = new Map<string, (typeof pairs)[number]>();
+      for (const p of pairs) {
+        const cur = best.get(p.baseToken.address);
+        if (!cur || (p.liquidity?.usd ?? 0) > (cur.liquidity?.usd ?? 0)) best.set(p.baseToken.address, p);
+      }
+      for (const [mint, p] of best) {
+        const cap = p.marketCap ?? p.fdv;
+        if (cap) caps.set(mint, cap);
+        if (mint === TOKEN.mint && p.priceUsd) caps.set(`${mint}:price`, Number(p.priceUsd));
+      }
+    } catch { /* leave placeholders */ }
+    document.querySelectorAll<HTMLElement>('[data-coin]').forEach((el) => {
+      el.querySelector('[data-mcap]')!.textContent = usd(caps.get(el.dataset.coin!));
+    });
+    renderWhatIf();
+  })();
+</script>

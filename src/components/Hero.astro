@@ -1,17 +1,35 @@
 ---
 import Icon from './Icon.astro';
 import ContractAddress from './ContractAddress.astro';
+import PumpPill from './PumpPill.astro';
+
+// Memecoin friends orbiting the logo: [file, name, position classes, animation delay]
+const orbit = [
+  ['fartcoin', 'Fartcoin', '-left-4 top-2 sm:-left-10', '0s'],
+  ['pnut', 'Peanut the Squirrel', 'right-0 -top-6 sm:-right-6', '1.2s'],
+  ['moodeng', 'Moo Deng', '-right-6 top-1/2 sm:-right-14', '2.4s'],
+  ['goat', 'Goatseus Maximus', 'left-6 -bottom-2 sm:left-0', '.6s'],
+  ['chillguy', 'Just a chill guy', 'right-10 -bottom-8', '1.8s'],
+  ['bonk', 'Bonk', '-left-10 top-1/2 hidden sm:block', '3s'],
+];
 ---
 <section class="relative isolate overflow-hidden pt-[72px]">
   <div class="bg-grid absolute inset-0 -z-10 [mask-image:radial-gradient(ellipse_at_top,black_30%,transparent_75%)]"></div>
-  <div class="absolute -top-40 right-[-10%] -z-10 size-[560px] rounded-full bg-brand-400/25 blur-3xl"></div>
+  <div class="bg-confetti absolute inset-0 -z-10 opacity-70 [mask-image:linear-gradient(to_right,transparent_40%,black_65%)]"></div>
+  <div class="absolute -top-40 right-[-10%] -z-10 size-[560px] rounded-full bg-brand-400/30 blur-3xl"></div>
+  <div class="absolute top-1/3 right-[22%] -z-10 size-[340px] rounded-full bg-candy-pink/25 blur-3xl"></div>
+  <div class="absolute -bottom-24 left-[-8%] -z-10 size-[420px] rounded-full bg-candy-yellow/30 blur-3xl"></div>
+  <div class="absolute top-24 left-[35%] -z-10 size-[260px] rounded-full bg-candy-sky/25 blur-3xl"></div>
 
-  <div class="container-x grid items-center gap-12 py-14 lg:min-h-[calc(100dvh-72px)] lg:grid-cols-[1.1fr_1fr] lg:py-20">
+  <div class="container-x grid items-center gap-14 py-14 lg:min-h-[calc(100dvh-72px)] lg:grid-cols-[1.1fr_1fr] lg:py-20">
     <div class="space-y-7">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="pop-sm inline-flex -rotate-2 items-center gap-1.5 rounded-full bg-candy-lime px-3 py-1 text-sm font-bold"><PumpPill class="size-5" /> Born on Pump.fun</span>
+        <span class="pop-sm inline-flex rotate-1 items-center gap-1.5 rounded-full bg-candy-yellow px-3 py-1 text-sm font-bold">🤝 Solana meme coin</span>
+      </div>
       <h1 class="font-display text-5xl font-bold leading-[0.95] tracking-tighter text-balance sm:text-6xl lg:text-7xl">
-        All you need is <span class="block text-brand-700">one referral code.</span>
+        All you need is <span class="block text-brand-700">one <span class="relative inline-block"><span class="absolute inset-x-[-6px] bottom-1 -z-10 h-[40%] -rotate-1 rounded-md bg-candy-pink/35"></span>referral</span> code.</span>
       </h1>
-
       <p class="max-w-xl text-lg text-pretty text-gray-600 sm:text-xl">
         $REFERRAL is the meme coin built on the oldest trick in the internet book: share your code.
         Every holder is a referrer, and every referral fuels the next wave.
@@ -26,7 +44,8 @@ import ContractAddress from './ContractAddress.astro';
     </div>
 
     <div class="relative mx-auto w-full max-w-[420px]">
-      <div class="relative aspect-square rounded-full bg-gradient-to-br from-brand-500 to-brand-800 p-4 shadow-2xl shadow-brand-700/30 sm:p-5">
+      <div class="absolute -inset-10 -z-10 animate-spin-slow rounded-full bg-[conic-gradient(from_0deg,#ff5fa2,#ffd23f,#bef264,#4cc9f0,#9b5de5,#ff5fa2)] opacity-60 blur-2xl"></div>
+      <div class="relative aspect-square rounded-full bg-gradient-to-br from-candy-lime via-brand-500 to-brand-800 p-4 shadow-2xl shadow-brand-700/30 ring-4 ring-ink sm:p-5">
         <div class="absolute inset-3 rounded-full bg-white/20 blur-md"></div>
         <picture>
           <source srcset="/logo.webp" type="image/webp" />
@@ -34,16 +53,24 @@ import ContractAddress from './ContractAddress.astro';
         </picture>
       </div>
 
+      <!-- Floating memecoins + Pump.fun pills -->
+      {orbit.map(([file, name, pos, delay]) => (
+        <img src={`/coins/${file}.webp`} alt={name} title={name} width="64" height="64" loading="lazy" decoding="async" style={`animation-delay:${delay}`} class={`pop-sm absolute size-16 animate-float rounded-full bg-white object-cover sm:size-20 ${pos}`} />
+      ))}
+      <PumpPill class="absolute -top-10 left-1/3 size-16 animate-wiggle drop-shadow-[4px_4px_0_#0b1a10]" />
+      <PumpPill class="absolute bottom-1/4 -left-16 hidden size-12 animate-float-slow drop-shadow-[3px_3px_0_#0b1a10] sm:block" color="#ff5fa2" />
+      <PumpPill class="absolute -right-16 top-6 hidden size-12 animate-float-slow drop-shadow-[3px_3px_0_#0b1a10] [animation-delay:2s] sm:block" color="#4cc9f0" />
+
       <!-- Live price chip, filled by the Live section's market feed -->
-      <div class="absolute -bottom-4 left-1/2 w-max -translate-x-1/2 rounded-2xl border border-gray-200 bg-white/95 px-5 py-3 shadow-xl backdrop-blur sm:-left-6 sm:bottom-10 sm:translate-x-0">
+      <div class="pop-sm absolute -bottom-6 left-1/2 z-10 w-max -translate-x-1/2 rounded-2xl bg-white px-5 py-3 sm:-left-6 sm:bottom-10 sm:translate-x-0">
         <div class="text-[11px] font-semibold uppercase tracking-widest text-gray-500">$REFERRAL price</div>
         <div class="flex items-baseline gap-2">
           <span data-hero-price class="font-display text-2xl font-bold tabular-nums">—</span>
           <span data-hero-change class="text-sm font-semibold tabular-nums text-gray-400"></span>
         </div>
       </div>
-      <div class="absolute -right-2 top-6 hidden rounded-2xl border border-gray-200 bg-white/95 px-4 py-2.5 shadow-xl backdrop-blur sm:block">
-        <div class="flex items-center gap-2 text-sm font-semibold"><Icon name="ShieldCheck" class="size-4 text-brand-700" /> Mint & freeze revoked</div>
+      <div class="pop-sm absolute -right-2 top-[38%] z-10 hidden rotate-3 rounded-2xl bg-candy-yellow px-4 py-2.5 sm:block">
+        <div class="flex items-center gap-2 text-sm font-bold"><Icon name="ShieldCheck" class="size-4" /> Mint & freeze revoked</div>
       </div>
     </div>
   </div>
