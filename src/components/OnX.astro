@@ -87,23 +87,7 @@ const posts = [
       ))}
     </div>
 
-    <!-- X header download -->
-    <div class="mt-12 overflow-hidden rounded-3xl border-4 border-ink bg-white shadow-[8px_8px_0_#0b1a10]" data-reveal>
-      <img src="/x-banner.png" alt="$REFERRAL × Pump.fun X header featuring the Pump.fun, alon and json referral posts" width="1500" height="500" loading="lazy" decoding="async" class="block w-full" />
-      <div class="flex flex-col items-start gap-4 border-t-4 border-ink p-5 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div class="font-display text-xl font-bold">Rep the code on your profile</div>
-          <p class="text-sm text-gray-600">1500×500 X header. Download it, set it as your banner, become a walking referral link.</p>
-        </div>
-        <a href="/x-banner.png" download="referral-x-header.png" data-banner-dl class="btn-primary shrink-0"><Icon name="Download" class="size-5" /> Download header</a>
-      </div>
-    </div>
-
     <p class="mt-6 text-xs text-gray-500">Posts shown for context and link to the originals on X. $REFERRAL is a community token and is not affiliated with Pump.fun.</p>
   </div>
 </section>
 
-<script>
-  import { confetti } from '../lib/fun';
-  document.querySelector('[data-banner-dl]')?.addEventListener('click', (e) => confetti(e.currentTarget as Element));
-</script>
