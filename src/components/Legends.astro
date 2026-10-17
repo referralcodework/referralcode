@@ -1,0 +1,80 @@
+---
+import Icon from './Icon.astro';
+import PumpPill from './PumpPill.astro';
+
+// Shout-outs only: avatars self-hosted in /public/legends. Nobody here is affiliated with $REFERRAL.
+const legends = [
+  { name: 'Ansem', handle: 'blknoiz06', avatar: 'ansem', rarity: 'Legendary', role: 'The Black Bull', blurb: 'The most famous caller of the Solana meme cycle. When the bull posts, the timeline moves.', bg: 'from-candy-yellow via-candy-orange to-candy-pink' },
+  { name: 'Mitch', handle: 'idrawline', avatar: null, rarity: 'Legendary', role: 'Draws the line', blurb: 'Solana meme OG known for drawing the line on the chart and sticking to it.', bg: 'from-candy-sky via-candy-purple to-candy-pink' },
+  { name: 'cented', handle: 'Cented7', avatar: 'cented', rarity: 'Legendary', role: 'The hodler', blurb: 'One of the most-watched wallets on Solana. Pure trench warfare, live.', bg: 'from-candy-lime via-brand-400 to-candy-sky' },
+  { name: 'Orangie', handle: 'orangie', avatar: 'orangie', rarity: 'Caller', role: 'Lifemaxxing', blurb: 'YouTuber who buys coins on camera and brings a whole army with him.', bg: 'from-candy-orange via-candy-yellow to-candy-lime' },
+  { name: 'Frank', handle: 'frankdegods', avatar: 'frank', rarity: 'OG', role: 'DeGods founder', blurb: 'Built one of the biggest communities on Solana before memes were cool.', bg: 'from-candy-purple via-candy-pink to-candy-orange' },
+  { name: 'threadguy', handle: 'notthreadguy', avatar: 'threadguy', rarity: 'Caller', role: 'Live at 8:30am EST', blurb: 'The morning show of the trenches. Every day, live, every coin.', bg: 'from-candy-pink via-candy-purple to-candy-sky' },
+  { name: 'alon', handle: 'a1lon9', avatar: 'alon', rarity: 'Founder', role: 'Co-founder of Pump.fun', blurb: 'Built the pill factory every coin on this page came out of.', bg: 'from-brand-400 via-candy-lime to-candy-yellow', pump: true },
+];
+const rarityColor: Record<string, string> = { Legendary: 'bg-candy-yellow', OG: 'bg-candy-purple text-white', Caller: 'bg-candy-sky', Founder: 'bg-candy-lime' };
+---
+<section id="legends" class="section relative overflow-hidden bg-ink text-white">
+  <div class="bg-confetti absolute inset-0 opacity-40"></div>
+  <div class="absolute -top-32 left-1/4 size-[420px] rounded-full bg-candy-purple/30 blur-3xl"></div>
+  <div class="absolute -bottom-32 right-0 size-[420px] rounded-full bg-candy-pink/25 blur-3xl"></div>
+
+  <div class="container-x relative">
+    <div class="max-w-2xl" data-reveal>
+      <span class="eyebrow bg-white/10 text-candy-yellow"><Icon name="Crown" class="size-3.5" /> Legends & callers</span>
+      <h2 class="h-section mt-4">The Solana trenches hall of fame.</h2>
+      <p class="lede text-white/70">Every cycle has its legends. These are the names the whole timeline knows: the callers, the OGs and the builders who turned Solana into the meme capital of crypto.</p>
+    </div>
+
+    <div class="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {legends.map((l, i) => {
+        const Tag = l.handle === 'idrawline' ? 'div' : 'a';
+        const link = Tag === 'a' ? { href: `https://x.com/${l.handle}`, target: '_blank', rel: 'noopener noreferrer', 'aria-label': `${l.name} on X` } : {};
+        return (
+          <Tag {...link} class={`legend group relative rounded-[1.75rem] bg-gradient-to-br p-1.5 shadow-[6px_6px_0_#000] transition duration-300 hover:-translate-y-2 hover:rotate-0 ${l.bg} ${i % 2 ? 'rotate-1' : '-rotate-1'}`} data-reveal>
+            <div class="relative h-full overflow-hidden rounded-[1.4rem] bg-ink/90 p-5">
+              <div class="holo pointer-events-none absolute inset-0 opacity-0 transition duration-500 group-hover:opacity-100"></div>
+              <div class="relative flex items-center justify-between">
+                <span class={`rounded-full px-2.5 py-0.5 text-[11px] font-black tracking-widest text-ink uppercase ${rarityColor[l.rarity]}`}>{l.rarity}</span>
+                <span class="font-mono text-xs text-white/50">#{String(i + 1).padStart(3, '0')}</span>
+              </div>
+              <div class={`relative mx-auto mt-4 size-28 rounded-full bg-gradient-to-br p-1 ${l.bg}`}>
+                {l.avatar
+                  ? <img src={`/legends/${l.avatar}.webp`} alt="" width="112" height="112" loading="lazy" decoding="async" class="size-full rounded-full border-4 border-ink object-cover transition duration-300 group-hover:scale-105" />
+                  : <span class="grid size-full place-items-center rounded-full border-4 border-ink bg-candy-sky font-display text-5xl font-bold text-ink" aria-hidden="true">M</span>}
+                {l.pump && <PumpPill class="absolute -right-2 -bottom-1 size-10 drop-shadow-[2px_2px_0_#000]" />}
+              </div>
+              <div class="relative mt-4 text-center">
+                <div class="font-display text-2xl font-bold">{l.name}</div>
+                <div class="text-sm text-white/60">@{l.handle}</div>
+                <div class="mt-2 inline-block rounded-full bg-white/10 px-3 py-0.5 text-xs font-semibold text-candy-lime">{l.role}</div>
+                <p class="mt-3 text-sm text-pretty text-white/75">{l.blurb}</p>
+              </div>
+              {Tag === 'a' && <div class="relative mt-4 flex items-center justify-center gap-1.5 text-sm font-semibold text-white/80 group-hover:text-white"><Icon name="x" class="size-3.5" /> Follow <Icon name="ArrowUpRight" class="size-4" /></div>}
+            </div>
+          </Tag>
+        );
+      })}
+
+      <!-- Your card -->
+      <a href="/pfp" class="group flex flex-col items-center justify-center rounded-[1.75rem] border-4 border-dashed border-white/30 p-6 text-center transition hover:-translate-y-2 hover:border-candy-lime" data-reveal>
+        <span class="grid size-24 place-items-center rounded-full bg-white/10 text-5xl transition group-hover:scale-110" aria-hidden="true">🫵</span>
+        <div class="mt-4 font-display text-2xl font-bold">Next legend: you</div>
+        <p class="mt-2 text-sm text-white/70">Every legend started with one post. Make your $REFERRAL PFP and start calling.</p>
+        <span class="mt-4 inline-flex items-center gap-1.5 font-semibold text-candy-lime">Make my PFP <Icon name="ArrowRight" class="size-4 transition group-hover:translate-x-1" /></span>
+      </a>
+    </div>
+
+    <p class="mt-8 text-xs text-white/50">A fan shout-out. None of these people are affiliated with $REFERRAL or have endorsed it. Nothing here is financial advice.</p>
+  </div>
+</section>
+
+<style>
+  .holo {
+    background: linear-gradient(115deg, transparent 20%, rgb(255 95 162 / .25) 35%, rgb(255 210 63 / .25) 45%, rgb(76 201 240 / .25) 55%, rgb(155 93 229 / .25) 65%, transparent 80%);
+    background-size: 250% 250%;
+    animation: holo 3s linear infinite;
+  }
+  @keyframes holo { from { background-position: 100% 0; } to { background-position: -150% 0; } }
+  @media (prefers-reduced-motion: reduce) { .holo { animation: none; } }
+</style>

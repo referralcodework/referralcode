@@ -3,16 +3,16 @@ import Icon from './Icon.astro';
 import PumpPill from './PumpPill.astro';
 import { TOKEN } from '../config';
 
-// Logos self-hosted in /public/coins. Market caps are filled live from DexScreener.
+// Only coins launched on Pump.fun. Logos self-hosted in /public/coins; market caps filled live from DexScreener.
 const coins = [
-  { file: 'fartcoin', name: 'Fartcoin', ticker: 'FARTCOIN', mint: '9BB6NFEcjBCtnNLFko2FqVQBq8HHM13kCyYcdQbgpump', pump: true, bg: 'bg-candy-yellow', tilt: '-rotate-2' },
-  { file: 'pnut', name: 'Peanut the Squirrel', ticker: 'PNUT', mint: '2qEHjDLDLbuBgRYvsxhc5D6uDWAivNFZGan56P1tpump', pump: true, bg: 'bg-candy-orange', tilt: 'rotate-1' },
-  { file: 'goat', name: 'Goatseus Maximus', ticker: 'GOAT', mint: 'CzLSujWBLFsSjncfkh59rUFqvafWcY5tzedWJSuypump', pump: true, bg: 'bg-candy-sky', tilt: '-rotate-1' },
-  { file: 'moodeng', name: 'Moo Deng', ticker: 'MOODENG', mint: 'ED5nyyWEzpPPiWimP8vYm7sD7TD3LAt3Q3gRTWHzPJBY', pump: true, bg: 'bg-candy-pink', tilt: 'rotate-2' },
-  { file: 'chillguy', name: 'Just a chill guy', ticker: 'CHILLGUY', mint: 'Df6yfrKC8kZE3KNkrHERKzAetSxbrWeniQfyJY4Jpump', pump: true, bg: 'bg-candy-lime', tilt: 'rotate-1' },
-  { file: 'bonk', name: 'Bonk', ticker: 'BONK', mint: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263', pump: false, bg: 'bg-candy-orange', tilt: '-rotate-2' },
-  { file: 'wif', name: 'dogwifhat', ticker: 'WIF', mint: 'EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm', pump: false, bg: 'bg-candy-purple', tilt: 'rotate-2' },
-  { file: 'popcat', name: 'Popcat', ticker: 'POPCAT', mint: '7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr', pump: false, bg: 'bg-candy-sky', tilt: '-rotate-1' },
+  { file: 'fartcoin', name: 'Fartcoin', ticker: 'FARTCOIN', mint: '9BB6NFEcjBCtnNLFko2FqVQBq8HHM13kCyYcdQbgpump', bg: 'bg-candy-yellow', tilt: '-rotate-2' },
+  { file: 'pnut', name: 'Peanut the Squirrel', ticker: 'PNUT', mint: '2qEHjDLDLbuBgRYvsxhc5D6uDWAivNFZGan56P1tpump', bg: 'bg-candy-orange', tilt: 'rotate-1' },
+  { file: 'goat', name: 'Goatseus Maximus', ticker: 'GOAT', mint: 'CzLSujWBLFsSjncfkh59rUFqvafWcY5tzedWJSuypump', bg: 'bg-candy-sky', tilt: '-rotate-1' },
+  { file: 'moodeng', name: 'Moo Deng', ticker: 'MOODENG', mint: 'ED5nyyWEzpPPiWimP8vYm7sD7TD3LAt3Q3gRTWHzPJBY', bg: 'bg-candy-pink', tilt: 'rotate-2' },
+  { file: 'chillguy', name: 'Just a chill guy', ticker: 'CHILLGUY', mint: 'Df6yfrKC8kZE3KNkrHERKzAetSxbrWeniQfyJY4Jpump', bg: 'bg-candy-lime', tilt: 'rotate-1' },
+  { file: 'bert', name: 'Bertram The Pomeranian', ticker: 'BERT', mint: 'HgBRWfYxEfvPhtqkaeymCQtHCrKE46qQ43pKe8HCpump', bg: 'bg-candy-orange', tilt: '-rotate-2' },
+  { file: 'act', name: 'Act I: The AI Prophecy', ticker: 'ACT', mint: 'GJAFwWjJ3vnTsrQVabjBVK2TYB1YtRCQXRDfDgUnpump', bg: 'bg-candy-purple', tilt: 'rotate-2' },
+  { file: 'ufd', name: 'Unicorn Fart Dust', ticker: 'UFD', mint: 'eL5fUxj2J4CiQsmW85k5FG9DvuQjjUoBHoQBi2Kpump', bg: 'bg-candy-sky', tilt: '-rotate-1' },
 ];
 ---
 <section id="memes-hall" class="section relative overflow-hidden bg-gradient-to-br from-candy-yellow via-[#ffe58a] to-candy-pink/70">
@@ -24,14 +24,14 @@ const coins = [
     <div class="max-w-2xl" data-reveal>
       <span class="eyebrow pop-sm bg-white text-ink"><PumpPill class="size-4" /> Pump.fun hall of fame</span>
       <h2 class="h-section mt-4">From pill to legend.</h2>
-      <p class="lede text-ink/80">Fartcoin, PNUT, GOAT, Moo Deng and Chill Guy all started as a little pill on Pump.fun. $REFERRAL was born in the same place. Here's the company we keep.</p>
+      <p class="lede text-ink/80">Every coin here, from Fartcoin and PNUT to Moo Deng and Chill Guy, started as a little pill on Pump.fun. $REFERRAL was born in the same place. Here's the company we keep.</p>
     </div>
 
     <div class="mt-12 grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
       {coins.map((c) => (
         <a href={`https://dexscreener.com/solana/${c.mint}`} target="_blank" rel="noopener noreferrer" data-coin={c.mint}
            class={`pop group relative flex flex-col items-center rounded-3xl p-4 text-center transition hover:-translate-y-1 hover:rotate-0 sm:p-5 ${c.bg} ${c.tilt}`} data-reveal aria-label={`${c.name} on DexScreener`}>
-          {c.pump && <span class="pop-sm absolute -top-3 -right-2 flex items-center gap-1 rounded-full bg-white px-2 py-0.5 text-[11px] font-bold"><PumpPill class="size-3.5" /> pump.fun</span>}
+          <span class="pop-sm absolute -top-3 -right-2 flex items-center gap-1 rounded-full bg-white px-2 py-0.5 text-[11px] font-bold"><PumpPill class="size-3.5" /> pump.fun</span>
           <img src={`/coins/${c.file}.webp`} alt="" width="96" height="96" loading="lazy" decoding="async" class="pop-sm size-20 rounded-full bg-white object-cover transition duration-300 group-hover:rotate-12 group-hover:scale-110 sm:size-24" />
           <div class="mt-3 font-display text-lg font-bold leading-tight">${c.ticker}</div>
           <div class="truncate text-xs font-medium text-ink/70">{c.name}</div>
@@ -75,7 +75,7 @@ const coins = [
       <span class="flex items-center gap-3 pr-10 font-display text-xl font-bold whitespace-nowrap text-white">
         {c ? <img src={`/coins/${c.file}.webp`} alt="" width="40" height="40" loading="lazy" class="size-10 rounded-full border-2 border-white" /> : <img src="/logo-72.png" alt="" width="40" height="40" class="size-10 rounded-full border-2 border-candy-lime bg-white" />}
         <span class={c ? '' : 'text-candy-lime'}>${c ? c.ticker : 'REFERRAL'}</span>
-        <PumpPill class="size-6" color={c?.pump === false ? '#ffd23f' : '#5fcf8a'} />
+        <PumpPill class="size-6" />
       </span>
     )))}
   </div>
