@@ -48,12 +48,12 @@ const filters: [string, string][] = [['all', `All ${legends.length}`], ['caller'
       ))}
     </div>
 
-    <div class="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="-mx-4 mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto [scrollbar-width:none] px-4 [&::-webkit-scrollbar]:hidden pt-2 pb-6 sm:-mx-6 sm:px-6 lg:mx-0 lg:grid lg:grid-cols-4 lg:gap-6 lg:overflow-visible lg:px-0 lg:pb-0 xl:grid-cols-5">
       {legends.map((l, i) => {
         const Tag = l.live === false ? 'div' : 'a';
         const link = Tag === 'a' ? { href: `https://x.com/${l.handle}`, target: '_blank', rel: 'noopener noreferrer', 'aria-label': `${l.name} on X` } : {};
         return (
-          <Tag {...link} class={`legend group relative rounded-[1.75rem] bg-gradient-to-br p-1.5 shadow-[6px_6px_0_#000] transition duration-300 hover:-translate-y-2 hover:rotate-0 ${gradients[i % gradients.length]} ${i % 2 ? 'rotate-1' : '-rotate-1'}`} data-group={l.group}>
+          <Tag {...link} class={`legend group relative w-[78%] shrink-0 snap-center rounded-[1.75rem] sm:w-[42%] lg:w-auto bg-gradient-to-br p-1.5 shadow-[6px_6px_0_#000] transition duration-300 hover:-translate-y-2 hover:rotate-0 ${gradients[i % gradients.length]} ${i % 2 ? 'rotate-1' : '-rotate-1'}`} data-group={l.group}>
             <div class="relative h-full overflow-hidden rounded-[1.4rem] bg-ink/90 p-5">
               <div class="holo pointer-events-none absolute inset-0 opacity-0 transition duration-500 group-hover:opacity-100"></div>
               <div class="relative flex items-center justify-between">
@@ -79,7 +79,7 @@ const filters: [string, string][] = [['all', `All ${legends.length}`], ['caller'
       })}
 
       <!-- Your card -->
-      <a href="/pfp" data-group="you" class="group flex flex-col items-center justify-center rounded-[1.75rem] border-4 border-dashed border-white/30 p-6 text-center transition hover:-translate-y-2 hover:border-candy-lime" data-reveal>
+      <a href="/pfp" data-group="you" class="group flex w-[78%] shrink-0 snap-center flex-col sm:w-[42%] lg:w-auto items-center justify-center rounded-[1.75rem] border-4 border-dashed border-white/30 p-6 text-center transition hover:-translate-y-2 hover:border-candy-lime" data-reveal>
         <span class="grid size-24 place-items-center rounded-full bg-white/10 text-5xl transition group-hover:scale-110" aria-hidden="true">🫵</span>
         <div class="mt-4 font-display text-2xl font-bold">Next legend: you</div>
         <p class="mt-2 text-sm text-white/70">Every legend started with one post. Make your $REFERRAL PFP and start calling.</p>
@@ -87,6 +87,7 @@ const filters: [string, string][] = [['all', `All ${legends.length}`], ['caller'
       </a>
     </div>
 
+    <p class="mt-2 text-center text-xs font-semibold text-white/60 lg:hidden">Swipe for more legends →</p>
     <p class="mt-8 text-xs text-white/50">A fan shout-out. None of these people are affiliated with $REFERRAL or have endorsed it. Nothing here is financial advice.</p>
   </div>
 </section>
