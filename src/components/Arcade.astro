@@ -1,0 +1,225 @@
+---
+import Icon from './Icon.astro';
+import PumpPill from './PumpPill.astro';
+import { RANKS } from '../config';
+
+const quiz = [
+  { q: 'A new coin launches. You…', a: [['Post a 3-word thread and watch it run', 'caller'], ['Ape in the first block, sell the top', 'trencher'], ['Go live and buy it on stream', 'streamer'], ['Read the contract first', 'builder']] },
+  { q: 'Your favourite time of day?', a: [['Whenever I post', 'caller'], ['3am, chart open', 'trencher'], ['8:30am EST, camera on', 'streamer'], ['Ship day', 'builder']] },
+  { q: 'Pick a weapon.', a: [['Conviction', 'caller'], ['A fast wallet', 'trencher'], ['A webcam', 'streamer'], ['A terminal', 'builder']] },
+];
+const results = {
+  caller: { name: 'Ansem', handle: 'blknoiz06', avatar: 'ansem', line: 'You are the bull. One post and the timeline follows.' },
+  trencher: { name: 'cented', handle: 'Cented7', avatar: 'cented', line: 'You live in the trenches. Fast hands, cold blood.' },
+  streamer: { name: 'threadguy', handle: 'notthreadguy', avatar: 'threadguy', line: 'You trade out loud. Chat is your co-pilot.' },
+  builder: { name: 'toly', handle: 'toly', avatar: 'toly', line: 'You build the casino everyone else plays in.' },
+};
+const levels = RANKS.map((r, i) => ({ name: r.name, at: [0, 100, 1000, 10000][i] }));
+---
+<section id="arcade" data-arcade={JSON.stringify({ results, levels })} class="section relative overflow-hidden bg-gradient-to-br from-candy-purple via-fuchsia-500 to-candy-pink text-white">
+  <div class="bg-dots pointer-events-none absolute inset-0 opacity-40"></div>
+  <PumpPill class="absolute left-[8%] top-12 hidden size-14 animate-float drop-shadow-[4px_4px_0_#0b1a10] md:block" color="#ffd23f" />
+  <PumpPill class="absolute right-[6%] bottom-16 size-16 animate-wiggle drop-shadow-[4px_4px_0_#0b1a10]" color="#4cc9f0" />
+
+  <div class="container-x relative">
+    <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+      <div class="max-w-2xl" data-reveal>
+        <span class="eyebrow bg-candy-yellow"><Icon name="Gamepad2" class="size-3.5" /> Referral arcade</span>
+        <h2 class="h-section mt-4">Insert coin. Waste time. Stay bullish.</h2>
+        <p class="lede text-white/85">Three tiny games for the time between candles. Nothing to win, everything to post.</p>
+      </div>
+      <button type="button" data-rain class="btn-ghost shrink-0 bg-candy-yellow text-lg" data-reveal>💸 Make it rain</button>
+    </div>
+
+    <div class="mt-12 grid gap-6 lg:grid-cols-3">
+      <!-- 1. Pill clicker -->
+      <div class="pop flex flex-col rounded-[2rem] bg-candy-lime p-6 text-ink" data-reveal>
+        <div class="flex items-center justify-between">
+          <h3 class="font-display text-2xl font-bold">Pill clicker</h3>
+          <span data-rank class="rounded-full border-2 border-ink bg-white px-2.5 py-0.5 text-xs font-black uppercase tracking-widest">{levels[0].name}</span>
+        </div>
+        <p class="mt-1 text-sm text-ink/70">Tap the pill. Every tap is a referral. Buy upgrades, climb the ranks.</p>
+        <div class="relative mt-4 grid place-items-center">
+          <button type="button" data-pill class="relative grid size-40 place-items-center rounded-full border-4 border-ink bg-white shadow-[6px_6px_0_#0b1a10] transition active:scale-95 active:shadow-[2px_2px_0_#0b1a10]" aria-label="Tap the pill">
+            <PumpPill class="size-28" />
+          </button>
+        </div>
+        <div class="mt-4 text-center">
+          <div data-count class="font-display text-4xl font-bold tabular-nums">0</div>
+          <div class="text-xs font-bold uppercase tracking-widest text-ink/60">referrals · <span data-rate>0</span>/sec</div>
+          <div class="mx-auto mt-2 h-2.5 max-w-[16rem] overflow-hidden rounded-full border-2 border-ink bg-white"><div data-progress class="h-full w-0 bg-candy-pink transition-[width]"></div></div>
+          <div data-next class="mt-1 text-[11px] font-semibold text-ink/60"></div>
+        </div>
+        <div class="mt-4 grid gap-2">
+          {[['tap', '📇 Share card', '+1 per tap', 25], ['raid', '⚔️ Raid squad', '+1 per sec', 100], ['kol', '📣 KOL shoutout', '+10 per sec', 1000]].map(([key, label, gain, cost]) => (
+            <button type="button" data-upgrade={key} data-cost={cost} class="flex items-center justify-between rounded-2xl border-2 border-ink bg-white px-3 py-2 text-left text-sm font-bold transition enabled:hover:-translate-y-0.5 enabled:hover:bg-candy-yellow disabled:opacity-50">
+              <span>{label} <span class="font-medium text-ink/60">{gain}</span></span>
+              <span class="font-mono"><span data-price>{cost}</span> · x<span data-owned>0</span></span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <!-- 2. Magic pill -->
+      <div class="pop flex flex-col rounded-[2rem] bg-candy-yellow p-6 text-ink" data-reveal>
+        <h3 class="font-display text-2xl font-bold">The magic pill</h3>
+        <p class="mt-1 text-sm text-ink/70">Ask it anything about your bags. It is always right (it is never right).</p>
+        <form data-oracle class="mt-4 flex flex-col gap-3">
+          <label class="sr-only" for="oracle-q">Your question</label>
+          <input id="oracle-q" class="input" maxlength="80" placeholder="Wen moon?" autocomplete="off" />
+          <button class="btn border-[3px] border-ink bg-ink text-candy-yellow shadow-[4px_4px_0_#ff5fa2] hover:-translate-y-0.5">🔮 Ask the pill</button>
+        </form>
+        <div class="mt-5 grid flex-1 place-items-center">
+          <div data-ball class="grid size-44 place-items-center rounded-full border-4 border-ink bg-ink p-6 shadow-[6px_6px_0_#0b1a10]">
+            <div class="grid size-full place-items-center rounded-full bg-gradient-to-br from-candy-purple to-candy-sky p-3 text-center">
+              <span data-answer class="text-sm font-bold leading-snug text-white">Ask me something</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Which legend are you -->
+      <div class="pop flex flex-col rounded-[2rem] bg-candy-sky p-6 text-ink" data-reveal>
+        <h3 class="font-display text-2xl font-bold">Which legend are you?</h3>
+        <p class="mt-1 text-sm text-ink/70">Three questions. One destiny. Zero scientific basis.</p>
+        <div data-quiz class="mt-4 flex-1">
+          {quiz.map((step, i) => (
+            <div data-step={i} hidden={i > 0}>
+              <div class="text-xs font-black uppercase tracking-widest text-ink/60">Question {i + 1} of {quiz.length}</div>
+              <div class="mt-1 font-display text-xl font-bold">{step.q}</div>
+              <div class="mt-3 grid gap-2">
+                {step.a.map(([label, key]) => (
+                  <button type="button" data-answer-key={key} class="rounded-2xl border-2 border-ink bg-white px-3 py-2.5 text-left text-sm font-bold transition hover:-translate-y-0.5 hover:bg-candy-lime">{label}</button>
+                ))}
+              </div>
+            </div>
+          ))}
+          <div data-result hidden class="text-center">
+            <img data-result-img src="/legends/ansem.webp" alt="" width="112" height="112" class="mx-auto size-28 rounded-full border-4 border-ink object-cover shadow-[4px_4px_0_#0b1a10]" />
+            <div class="mt-3 text-xs font-black uppercase tracking-widest text-ink/60">You are</div>
+            <div data-result-name class="font-display text-3xl font-bold">Ansem</div>
+            <p data-result-line class="mt-1 text-sm"></p>
+            <div class="mt-4 flex flex-wrap justify-center gap-2">
+              <a data-result-share href="#arcade" target="_blank" rel="noopener noreferrer" class="btn min-h-11 border-2 border-ink bg-ink px-4 text-sm text-white"><Icon name="x" class="size-3.5" /> Post it</a>
+              <button type="button" data-quiz-again class="btn min-h-11 border-2 border-ink bg-white px-4 text-sm">Again</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="mt-8 text-center text-sm text-white/80">psst… type <kbd class="rounded-md border-2 border-white/60 px-1.5 font-mono font-bold">referral</kbd> anywhere on the site.</p>
+  </div>
+</section>
+
+<script>
+  import { confetti, coinRain } from '../lib/fun';
+  import { xIntent } from '../lib/ui';
+  import { TOKEN, SITE } from '../config';
+
+  type Result = { name: string; handle: string; avatar: string; line: string };
+  const { results, levels }: { results: Record<string, Result>; levels: { name: string; at: number }[] } = JSON.parse(document.getElementById('arcade')!.dataset.arcade!);
+  const $ = <T extends Element = HTMLElement>(s: string) => document.querySelector<T>(s)!;
+
+  document.querySelectorAll('[data-rain]').forEach((b) => b.addEventListener('click', () => coinRain()));
+
+  // ---------- Pill clicker (progress kept in this browser only) ----------
+  const KEY = 'referral-clicker-v1';
+  type Save = { n: number; tap: number; raid: number; kol: number };
+  let save: Save = { n: 0, tap: 0, raid: 0, kol: 0 };
+  try { save = { ...save, ...JSON.parse(localStorage.getItem(KEY) ?? '{}') }; } catch { /* private mode */ }
+  const persist = () => { try { localStorage.setItem(KEY, JSON.stringify(save)); } catch { /* ignore */ } };
+  const price = (key: 'tap' | 'raid' | 'kol', base: number) => Math.round(base * 1.6 ** save[key]);
+  const perTap = () => 1 + save.tap;
+  const perSec = () => save.raid + save.kol * 10;
+  const fmt = (n: number) => Math.floor(n).toLocaleString('en-US');
+  let lastRank = '';
+
+  function render() {
+    $('[data-count]').textContent = fmt(save.n);
+    $('[data-rate]').textContent = fmt(perSec());
+    const idx = levels.reduce((acc, l, i) => (save.n >= l.at ? i : acc), 0);
+    const rank = levels[idx].name;
+    $('[data-rank]').textContent = rank;
+    const next = levels[idx + 1];
+    $<HTMLElement>('[data-progress]').style.width = next ? `${((save.n - levels[idx].at) / (next.at - levels[idx].at)) * 100}%` : '100%';
+    $('[data-next]').textContent = next ? `${fmt(next.at - save.n)} to ${next.name}` : 'Max rank. You are the referral code.';
+    if (lastRank && rank !== lastRank) confetti($('[data-pill]'), 50);
+    lastRank = rank;
+    document.querySelectorAll<HTMLButtonElement>('[data-upgrade]').forEach((b) => {
+      const key = b.dataset.upgrade as 'tap' | 'raid' | 'kol';
+      const cost = price(key, Number(b.dataset.cost));
+      b.querySelector('[data-price]')!.textContent = fmt(cost);
+      b.querySelector('[data-owned]')!.textContent = String(save[key]);
+      b.disabled = save.n < cost;
+    });
+  }
+
+  const pill = $<HTMLButtonElement>('[data-pill]');
+  pill.addEventListener('click', (e) => {
+    save.n += perTap();
+    const pop = document.createElement('span');
+    pop.textContent = `+${perTap()}`;
+    pop.setAttribute('aria-hidden', 'true');
+    pop.className = 'pointer-events-none absolute font-display text-2xl font-bold text-candy-pink [text-shadow:2px_2px_0_#0b1a10]';
+    const r = pill.getBoundingClientRect();
+    pop.style.left = `${(e.clientX || r.left + r.width / 2) - r.left}px`;
+    pop.style.top = `${(e.clientY || r.top + r.height / 2) - r.top}px`;
+    pill.appendChild(pop);
+    pop.animate([{ transform: 'translate(-50%,-50%)', opacity: 1 }, { transform: 'translate(-50%,-160%)', opacity: 0 }], { duration: 700, easing: 'ease-out' }).onfinish = () => pop.remove();
+    render();
+    persist();
+  });
+  document.querySelectorAll<HTMLButtonElement>('[data-upgrade]').forEach((b) => b.addEventListener('click', () => {
+    const key = b.dataset.upgrade as 'tap' | 'raid' | 'kol';
+    const cost = price(key, Number(b.dataset.cost));
+    if (save.n < cost) return;
+    save.n -= cost;
+    save[key]++;
+    confetti(b, 14);
+    render();
+    persist();
+  }));
+  setInterval(() => { if (perSec()) { save.n += perSec(); render(); persist(); } }, 1000);
+  render();
+
+  // ---------- Magic pill ----------
+  const ANSWERS = [
+    'Soon™', 'Use my code and ask again', 'Ser, this is a casino', 'Send it 🚀', 'Not financial advice, but… yes',
+    'Ask again after the next pump', 'The trenches say no', 'Only if you post your referral card', 'Bullish. Probably.',
+    'Touch grass first', 'The chart is a mirror', 'Diamond hands required', 'Outlook: green candles', 'Ask Ansem',
+    'Your bags have heard you', 'Cannot predict now, buying the dip', 'Yes, but only on Pump.fun',
+  ];
+  const ball = $('[data-ball]');
+  $('[data-oracle]').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const answer = $('[data-answer]');
+    answer.textContent = '…';
+    ball.animate([{ rotate: '0deg' }, { rotate: '-12deg' }, { rotate: '12deg' }, { rotate: '-8deg' }, { rotate: '0deg' }], { duration: 600 });
+    setTimeout(() => { answer.textContent = ANSWERS[Math.floor(Math.random() * ANSWERS.length)]; confetti(ball, 12); }, 600);
+  });
+
+  // ---------- Which legend are you ----------
+  const steps = [...document.querySelectorAll<HTMLElement>('[data-step]')];
+  let tally: Record<string, number> = {};
+  let step = 0;
+  document.querySelectorAll<HTMLButtonElement>('[data-answer-key]').forEach((b) => b.addEventListener('click', () => {
+    const k = b.dataset.answerKey!;
+    tally[k] = (tally[k] ?? 0) + 1;
+    steps[step].hidden = true;
+    step++;
+    if (step < steps.length) { steps[step].hidden = false; return; }
+    const winner = Object.entries(tally).sort((a, b) => b[1] - a[1])[0][0];
+    const r = results[winner];
+    $<HTMLImageElement>('[data-result-img]').src = `/legends/${r.avatar}.webp`;
+    $('[data-result-name]').textContent = r.name;
+    $('[data-result-line]').textContent = r.line;
+    $<HTMLAnchorElement>('[data-result-share]').href = xIntent(`I took the ${TOKEN.ticker} legend quiz and I'm ${r.name} 🫡\n\nWhich Solana legend are you?`, `${SITE.url}/#arcade`);
+    $('[data-result]').hidden = false;
+    confetti($('[data-result-img]'), 40);
+  }));
+  $('[data-quiz-again]').addEventListener('click', () => {
+    tally = {}; step = 0;
+    $('[data-result]').hidden = true;
+    steps.forEach((s, i) => { s.hidden = i > 0; });
+  });
+</script>

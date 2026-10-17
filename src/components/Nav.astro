@@ -2,7 +2,7 @@
 import Icon from './Icon.astro';
 import { NAV, LINKS } from '../config';
 ---
-<header class="fixed inset-x-0 top-0 z-50 border-b border-gray-200/80 bg-white/90 backdrop-blur-lg">
+<header class="fixed inset-x-0 top-0 z-50 bg-white/90 backdrop-blur-lg">
   <nav class="container-x flex h-[72px] items-center justify-between gap-4" aria-label="Main">
     <a href="/" class="flex shrink-0 items-center gap-2" aria-label="Referral Code home">
       <picture>
@@ -14,7 +14,7 @@ import { NAV, LINKS } from '../config';
 
     <ul class="hidden items-center gap-1 text-sm font-medium lg:flex">
       {NAV.map((l) => (
-        <li><a href={l.href} class="rounded-xl px-3 py-2 text-gray-700 hover:bg-gray-100 hover:text-brand-800">{l.label}</a></li>
+        <li><a href={l.href} class="nav-link rounded-xl px-3 py-2 font-semibold text-gray-700 transition hover:-rotate-2 hover:text-ink">{l.label}</a></li>
       ))}
     </ul>
 
@@ -37,6 +37,10 @@ import { NAV, LINKS } from '../config';
       <li class="pt-2 pb-3"><a href="/#buy" class="btn-primary w-full">Buy $REFERRAL</a></li>
     </ul>
   </div>
+  <!-- Rainbow strip that fills as you scroll -->
+  <div class="relative h-1.5 bg-ink/10" aria-hidden="true">
+    <div data-scroll-bar class="h-full origin-left scale-x-0 bg-[linear-gradient(90deg,#ff5fa2,#ff8c42,#ffd23f,#bef264,#4cc9f0,#9b5de5)]"></div>
+  </div>
 </header>
 
 <script>
@@ -50,4 +54,22 @@ import { NAV, LINKS } from '../config';
   btn.addEventListener('click', () => set(menu.hidden !== false));
   menu.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a')) set(false); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) { set(false); btn.focus(); } });
+
+  // Scroll progress
+  const bar = document.querySelector<HTMLElement>('[data-scroll-bar]')!;
+  const onScroll = () => {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    bar.style.transform = `scaleX(${max > 0 ? Math.min(1, scrollY / max) : 0})`;
+  };
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 </script>
+
+<style>
+  li:nth-child(6n + 1) > .nav-link:hover { background: #bef264; }
+  li:nth-child(6n + 2) > .nav-link:hover { background: #ffd23f; }
+  li:nth-child(6n + 3) > .nav-link:hover { background: #4cc9f0; }
+  li:nth-child(6n + 4) > .nav-link:hover { background: #ff5fa2; }
+  li:nth-child(6n + 5) > .nav-link:hover { background: #ff8c42; }
+  li:nth-child(6n + 6) > .nav-link:hover { background: #c4a5f5; }
+</style>

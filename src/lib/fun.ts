@@ -31,3 +31,28 @@ export function confetti(from: Element | { x: number; y: number }, count = 26) {
     ).onfinish = () => el.remove();
   }
 }
+
+const RAIN = ['fartcoin', 'pnut', 'moodeng', 'goat', 'chillguy', 'bert', 'ban', 'neet', 'fwog', 'ufd', 'pippin', 'vine'];
+
+/** Make it rain: memecoin logos, pills and the $REFERRAL logo fall from the sky. */
+export function coinRain(count = 60) {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  for (let i = 0; i < count; i++) {
+    const roll = Math.random();
+    const el = document.createElement(roll < 0.2 ? 'span' : 'img');
+    if (el instanceof HTMLImageElement) {
+      el.src = roll < 0.3 ? '/logo-72.png' : `/coins/${RAIN[Math.floor(Math.random() * RAIN.length)]}.webp`;
+      el.alt = '';
+    } else el.textContent = '💊';
+    const size = 28 + Math.random() * 30;
+    el.setAttribute('aria-hidden', 'true');
+    el.style.cssText = `position:fixed;top:-70px;left:${Math.random() * 100}vw;width:${size}px;height:${size}px;font-size:${size * 0.8}px;line-height:1;border-radius:9999px;border:2px solid #0b1a10;background:#fff;z-index:130;pointer-events:none;object-fit:cover;`;
+    if (!(el instanceof HTMLImageElement)) el.style.border = el.style.background = 'none';
+    document.body.appendChild(el);
+    const drift = (Math.random() - 0.5) * 200;
+    el.animate(
+      [{ transform: 'translate(0,0) rotate(0)' }, { transform: `translate(${drift}px, ${innerHeight + 140}px) rotate(${(Math.random() - 0.5) * 900}deg)` }],
+      { duration: 1800 + Math.random() * 1800, delay: Math.random() * 1400, easing: 'cubic-bezier(.35,0,.65,1)', fill: 'backwards' },
+    ).onfinish = () => el.remove();
+  }
+}

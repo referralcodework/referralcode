@@ -100,6 +100,19 @@ const jsonLd = {
         }
       }
 
+      // Easter egg: type 'referral' (or the Konami code) anywhere to make it rain.
+      let typed = '';
+      const konami = 'ArrowUpArrowUpArrowDownArrowDownArrowLeftArrowRightArrowLeftArrowRightba';
+      document.addEventListener('keydown', (e) => {
+        if (e.target instanceof Element && e.target.closest('input, textarea, select, [contenteditable]')) return;
+        typed = (typed + e.key).slice(-80);
+        if (typed.toLowerCase().endsWith('referral') || typed.endsWith(konami)) {
+          typed = '';
+          import('../lib/fun').then(({ coinRain }) => coinRain(80));
+          toast('💸 Referral rain! All you need is one referral code.');
+        }
+      });
+
       // Reveal-on-scroll
       const io = new IntersectionObserver((entries) => {
         for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }

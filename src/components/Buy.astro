@@ -3,16 +3,16 @@ import Icon from './Icon.astro';
 import { LINKS } from '../config';
 
 const steps = [
-  { icon: 'Wallet', title: 'Get a Solana wallet', body: 'Install Phantom, Solflare or Backpack. Write your seed phrase on paper and never share it with anyone.' },
-  { icon: 'Coins', title: 'Add some SOL', body: 'Buy SOL on an exchange like Coinbase, Kraken or Binance and send it to your wallet. Keep a little extra for fees.' },
-  { icon: 'ArrowLeftRight', title: 'Swap right here', body: 'Connect your wallet in the swap box, enter how much SOL to spend, and confirm. That\'s it.' },
+  { icon: 'Wallet', color: 'bg-candy-purple text-white', title: 'Get a Solana wallet', body: 'Install Phantom, Solflare or Backpack. Write your seed phrase on paper and never share it with anyone.' },
+  { icon: 'Coins', color: 'bg-candy-yellow', title: 'Add some SOL', body: 'Buy SOL on an exchange like Coinbase, Kraken or Binance and send it to your wallet. Keep a little extra for fees.' },
+  { icon: 'ArrowLeftRight', color: 'bg-candy-lime', title: 'Swap right here', body: 'Connect your wallet in the swap box, enter how much SOL to spend, and confirm. That\'s it.' },
 ];
 ---
 <section id="buy" class="section bg-gradient-to-br from-fuchsia-100 via-amber-50 to-lime-100">
   <div class="container-x grid items-start gap-12 lg:grid-cols-[1fr_440px]">
     <div>
       <div data-reveal>
-        <span class="eyebrow"><Icon name="Zap" class="size-3.5" /> Buy in one place</span>
+        <span class="eyebrow bg-candy-orange"><Icon name="Zap" class="size-3.5" /> Buy in one place</span>
         <h2 class="h-section mt-4">Get $REFERRAL without leaving the page.</h2>
         <p class="lede">The swap box is Jupiter's official plugin, Solana's most-used swap aggregator. It finds the best price and your wallet signs the trade. This site never sees your keys or funds.</p>
       </div>
@@ -20,7 +20,7 @@ const steps = [
       <ol class="mt-10 space-y-4">
         {steps.map((s, i) => (
           <li class="card flex gap-5 p-5 sm:p-6" data-reveal>
-            <span class="grid size-12 shrink-0 place-items-center rounded-2xl bg-brand-700 font-display text-lg font-bold text-white">{i + 1}</span>
+            <span class={`grid size-12 shrink-0 -rotate-6 place-items-center rounded-2xl border-[3px] border-ink font-display text-xl font-bold shadow-[3px_3px_0_#0b1a10] ${s.color}`}>{i + 1}</span>
             <div>
               <h3 class="flex items-center gap-2 text-lg font-semibold"><Icon name={s.icon} class="size-5 text-brand-700" /> {s.title}</h3>
               <p class="mt-1 text-gray-600">{s.body}</p>
@@ -29,7 +29,7 @@ const steps = [
         ))}
       </ol>
 
-      <div class="mt-6 flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900" data-reveal>
+      <div class="mt-6 flex items-start gap-3 rounded-2xl border-[3px] border-ink bg-candy-yellow p-4 text-sm text-ink shadow-[4px_4px_0_#0b1a10]" data-reveal>
         <Icon name="TriangleAlert" class="mt-0.5 size-5 shrink-0" />
         <p><strong>Stay safe:</strong> nobody from the community will ever DM you first, ask for your seed phrase, or send you a "support" link. Always check the contract address matches the one on this site.</p>
       </div>

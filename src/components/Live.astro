@@ -3,10 +3,10 @@ import Icon from './Icon.astro';
 import { LINKS } from '../config';
 
 const stats = [
-  { key: 'price', label: 'Price', icon: 'CircleDollarSign' },
-  { key: 'mcap', label: 'Market cap', icon: 'PieChart' },
-  { key: 'liq', label: 'Liquidity', icon: 'Droplets' },
-  { key: 'vol', label: '24h volume', icon: 'BarChart3' },
+  { key: 'price', label: 'Price', icon: 'CircleDollarSign', color: 'bg-candy-lime' },
+  { key: 'mcap', label: 'Market cap', icon: 'PieChart', color: 'bg-candy-yellow' },
+  { key: 'liq', label: 'Liquidity', icon: 'Droplets', color: 'bg-candy-sky' },
+  { key: 'vol', label: '24h volume', icon: 'BarChart3', color: 'bg-candy-pink' },
 ];
 const ranges = [
   { key: '1d', label: '24H' },
@@ -14,11 +14,12 @@ const ranges = [
   { key: '30d', label: '30D' },
 ];
 ---
-<section id="live" class="section bg-confetti">
-  <div class="container-x">
+<section id="live" class="section relative overflow-hidden bg-gradient-to-br from-lime-200 via-yellow-50 to-orange-200">
+  <div class="bg-confetti pointer-events-none absolute inset-0 opacity-60"></div>
+  <div class="container-x relative">
     <div class="flex flex-wrap items-end justify-between gap-6" data-reveal>
       <div class="max-w-2xl">
-        <span class="eyebrow"><span class="size-2 animate-pulse rounded-full bg-brand-600"></span> Live</span>
+        <span class="eyebrow bg-candy-pink"><span class="size-2 animate-pulse rounded-full bg-ink"></span> Live</span>
         <h2 class="h-section mt-4">The market, in real time.</h2>
       </div>
       <div class="flex items-center gap-3 text-sm">
@@ -34,8 +35,9 @@ const ranges = [
     <!-- Stat tiles -->
     <div class="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-4">
       {stats.map((s) => (
-        <div class="card p-5 sm:p-6" data-stat={s.key}>
-          <div class="flex items-center gap-2 text-sm font-medium text-gray-500"><Icon name={s.icon} class="size-4 text-brand-700" /> {s.label}</div>
+        <div class="card relative overflow-hidden p-5 pt-7 sm:p-6 sm:pt-8" data-stat={s.key}>
+          <span class={`absolute inset-x-0 top-0 h-3 border-b-[3px] border-ink ${s.color}`} aria-hidden="true"></span>
+          <div class="flex items-center gap-2 text-sm font-semibold text-gray-600"><span class={`grid size-7 place-items-center rounded-lg border-2 border-ink ${s.color}`}><Icon name={s.icon} class="size-4 text-ink" /></span> {s.label}</div>
           <div data-value class="mt-2 font-display text-2xl font-bold tabular-nums sm:text-3xl"><span class="skeleton inline-block h-8 w-28 align-middle"></span></div>
           <div data-sub class="mt-1 h-5 text-sm font-semibold tabular-nums"></div>
         </div>

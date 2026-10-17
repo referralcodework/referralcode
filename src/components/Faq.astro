@@ -11,21 +11,21 @@ const faqs = [
   { q: 'Why are some stats missing sometimes?', a: 'Live numbers come from free public APIs (DexScreener, GeckoTerminal and Solana RPC). If one is slow or rate-limited, that tile pauses and retries automatically.' },
 ];
 ---
-<section id="faq" class="section bg-gradient-to-b from-white to-lime-100">
+<section id="faq" class="section bg-gradient-to-br from-violet-100 via-pink-50 to-lime-100">
   <div class="container-x grid gap-12 lg:grid-cols-[1fr_1.5fr]">
     <div data-reveal>
-      <span class="eyebrow"><Icon name="CircleHelp" class="size-3.5" /> FAQ</span>
+      <span class="eyebrow bg-candy-purple text-white"><Icon name="CircleHelp" class="size-3.5" /> FAQ</span>
       <h2 class="h-section mt-4">Questions, answered.</h2>
       <p class="lede">Still curious? Ask the community on <a href={LINKS.x} target="_blank" rel="noopener noreferrer" class="font-semibold text-brand-800 underline-offset-2 hover:underline">X</a>.</p>
     </div>
     <div class="space-y-3">
-      {faqs.map((f) => (
-        <details class="group card p-0 open:border-brand-300" data-reveal>
+      {faqs.map((f, i) => (
+        <details class={`group card p-0 transition ${['open:bg-candy-yellow/40', 'open:bg-candy-sky/30', 'open:bg-candy-pink/25', 'open:bg-candy-lime/40', 'open:bg-candy-orange/25', 'open:bg-candy-purple/20'][i % 6]}`} data-reveal>
           <summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-5 text-lg font-semibold sm:p-6 [&::-webkit-details-marker]:hidden">
             {f.q}
-            <Icon name="Plus" class="size-5 shrink-0 text-brand-700 transition group-open:rotate-45" />
+            <span class="grid size-9 shrink-0 place-items-center rounded-full border-2 border-ink bg-candy-lime transition group-open:rotate-45 group-open:bg-candy-pink"><Icon name="Plus" class="size-5 text-ink" /></span>
           </summary>
-          <p class="-mt-2 px-5 pb-6 text-gray-600 sm:px-6">{f.a}</p>
+          <p class="-mt-2 px-5 pb-6 text-gray-700 sm:px-6">{f.a}</p>
         </details>
       ))}
     </div>
