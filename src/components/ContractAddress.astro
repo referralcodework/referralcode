@@ -24,10 +24,12 @@ const { size = 'lg' } = Astro.props;
 
 <script>
   import { copyText, toast } from '../lib/ui';
+  import { confetti } from '../lib/fun';
   import { TOKEN } from '../config';
   document.querySelectorAll<HTMLButtonElement>('[data-copy-ca]').forEach((btn) => {
     btn.addEventListener('click', async () => {
       const ok = await copyText(TOKEN.mint);
+      if (ok) confetti(btn, 18);
       toast(ok ? 'Contract address copied' : 'Copy failed. Long-press the address to copy it.', ok ? 'ok' : 'error');
     });
   });

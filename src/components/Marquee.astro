@@ -1,0 +1,19 @@
+---
+// Tilted ticker tape between sections. Pure CSS; the duplicated track makes the loop seamless.
+const items = ['USE MY CODE 🤝', '$50 + $50 💸', 'ALL YOU NEED IS ONE REFERRAL CODE', '4X BOOST 🚀', 'REFERRALS ARE THE META 🟢', '$REFERRAL 💊'];
+---
+<div class="relative z-10 -my-3 overflow-hidden py-6" aria-hidden="true">
+  <div class="-mx-4 -rotate-2 border-y-4 border-ink bg-lime-300 py-3 shadow-[0_6px_0_#0b1a10]">
+    <div class="marquee flex w-max font-display text-xl font-bold tracking-tight text-ink sm:text-2xl">
+      {[0, 1].map(() => items.map((t) => (
+        <span class="flex items-center gap-8 whitespace-nowrap pr-8">{t}<span class="text-brand-700">✦</span></span>
+      )))}
+    </div>
+  </div>
+</div>
+
+<style>
+  .marquee { animation: marquee 28s linear infinite; }
+  @keyframes marquee { to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) { .marquee { animation: none; } }
+</style>

@@ -30,7 +30,7 @@ import ContractAddress from './ContractAddress.astro';
         <div class="absolute inset-3 rounded-full bg-white/20 blur-md"></div>
         <picture>
           <source srcset="/logo.webp" type="image/webp" />
-          <img src="/logo.png" alt="Referral Code logo" width="400" height="400" fetchpriority="high" class="relative size-full rounded-full bg-white object-contain p-3" />
+          <img src="/logo.png" alt="Referral Code logo" width="400" height="400" fetchpriority="high" data-hero-logo title="Boop the code" class="relative size-full cursor-pointer rounded-full bg-white object-contain p-3" />
         </picture>
       </div>
 
@@ -52,6 +52,13 @@ import ContractAddress from './ContractAddress.astro';
 <script>
   import { price, pct } from '../lib/format';
   import type { Market } from '../lib/market';
+  import { confetti } from '../lib/fun';
+  // Easter egg: boop the logo.
+  const logo = document.querySelector<HTMLElement>('[data-hero-logo]');
+  logo?.addEventListener('click', (e) => {
+    confetti({ x: e.clientX, y: e.clientY }, 30);
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) logo.animate([{ transform: 'rotate(0) scale(1)' }, { transform: 'rotate(360deg) scale(1.06)' }], { duration: 700, easing: 'cubic-bezier(.3,1.4,.5,1)' });
+  });
   const p = document.querySelector('[data-hero-price]');
   const c = document.querySelector('[data-hero-change]');
   window.addEventListener('market', (e) => {

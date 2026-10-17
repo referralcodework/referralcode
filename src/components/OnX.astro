@@ -13,18 +13,29 @@ const pumpfun = {
 };
 
 const alon = {
-  url: 'https://x.com/a1lon9/status/2111168024065540192',
+  url: 'https://x.com/a1lon9/status/2111518969324577087',
   name: 'alon',
   handle: 'a1lon9',
   avatar: '/x/alon.jpg',
   avatarShape: 'rounded-full',
-  date: 'Oct 16, 2026',
-  text: 'We’ve been thinking a lot about how to grow the Pumpfun app to 10 million users in the fastest way possible.\n\nAfter dedicating significant resources to building the most performant product in the market and introducing crypto’s most novel rewards system in callout rewards, the…',
+  date: 'Oct 17, 2026',
+  text: 'Why referrals have to place trades to receive up to $50 deposit matches\n\nOur goal isn’t to get downloads, our goal is to RETAIN new users who can benefit every single one of you who shows up every day…',
+};
+
+const json = {
+  url: 'https://x.com/json1444/status/2111524613104828475',
+  name: 'json',
+  handle: 'json1444',
+  avatar: '/x/json.jpg',
+  avatarShape: 'rounded-full',
+  date: 'Oct 17, 2026',
+  text: 'TL;DR\n\n- new users mean nothing if they don’t stay in the ecosystem(!)\n- it’s incredibly easy for your referral to hit the deposit match, and better for you as a pump user\n- even if they don’t trade for the full 5 days, you both still get something\n- available worldwide(ish)',
 };
 
 const posts = [
-  { ...pumpfun, media: true, quote: false },
-  { ...alon, media: false, quote: true },
+  { ...pumpfun, media: true, quote: null, cta: 'Watch on X', sticker: '$50 + $50 💸', tilt: 'md:-rotate-1' },
+  { ...alon, media: false, quote: null, cta: 'Read the full post', sticker: 'RETAIN 🫡', tilt: 'md:rotate-1' },
+  { ...json, media: false, quote: alon, cta: 'Read on X', sticker: 'TL;DR 🧠', tilt: 'md:-rotate-[0.5deg]' },
 ];
 ---
 <section id="on-x" class="section bg-brand-50/60">
@@ -32,12 +43,13 @@ const posts = [
     <div class="max-w-2xl" data-reveal>
       <span class="eyebrow"><Icon name="x" class="size-3" /> Seen on X</span>
       <h2 class="h-section mt-4">Referrals are the meta now.</h2>
-      <p class="lede">Pump.fun just launched what it calls the most rewarding referral program in crypto, and Alon shared why. The whole timeline is typing "referral code." We already own the name.</p>
+      <p class="lede">Pump.fun launched what it calls the most rewarding referral program in crypto, Alon explained why it's built for retention, and json boiled it down to a TL;DR. The whole timeline is typing "referral code." We already own the name.</p>
     </div>
 
-    <div class="mt-12 grid gap-4 md:grid-cols-2">
+    <div class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {posts.map((p) => (
-        <a href={p.url} target="_blank" rel="noopener noreferrer" class="card card-lift group flex flex-col" data-reveal aria-label={`Read ${p.name}'s post on X`}>
+        <a href={p.url} target="_blank" rel="noopener noreferrer" class={`card card-lift group relative flex flex-col transition hover:rotate-0 ${p.tilt}`} data-reveal aria-label={`Read ${p.name}'s post on X`}>
+          <span class="absolute -top-3 right-5 rotate-3 rounded-lg border-2 border-ink bg-lime-300 px-2.5 py-0.5 font-display text-sm font-bold shadow-[3px_3px_0_#0b1a10] transition group-hover:-rotate-3 group-hover:scale-110" aria-hidden="true">{p.sticker}</span>
           <div class="flex items-center gap-3">
             <img src={p.avatar} alt="" width="48" height="48" loading="lazy" decoding="async" class={`size-12 shrink-0 ${p.avatarShape} border border-gray-200 object-cover`} />
             <div class="min-w-0 flex-1 leading-tight">
@@ -62,19 +74,36 @@ const posts = [
           {p.quote && (
             <div class="mt-5 rounded-2xl border border-gray-200 bg-gray-50/80 p-4">
               <div class="flex items-center gap-2 text-sm">
-                <img src={pumpfun.avatar} alt="" width="20" height="20" loading="lazy" decoding="async" class="size-5 rounded-md" />
-                <span class="font-semibold">{pumpfun.name}</span>
-                <span class="truncate text-gray-500">@{pumpfun.handle}</span>
+                <img src={p.quote.avatar} alt="" width="20" height="20" loading="lazy" decoding="async" class="size-5 rounded-full" />
+                <span class="font-semibold">{p.quote.name}</span>
+                <span class="truncate text-gray-500">@{p.quote.handle}</span>
               </div>
-              <p class="mt-1.5 line-clamp-2 text-sm text-gray-700">The MOST REWARDING referral program in crypto’s history. We’re giving away ALL of the Pumpfun App’s revenue via rewards!</p>
+              <p class="mt-1.5 line-clamp-2 text-sm text-gray-700">Why referrals have to place trades to receive up to $50 deposit matches</p>
             </div>
           )}
 
-          <span class="mt-auto inline-flex items-center gap-2 pt-6 font-semibold text-brand-800">{p.quote ? 'Read the full post' : 'Watch on X'} <Icon name="ArrowUpRight" class="size-4 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5" /></span>
+          <span class="mt-auto inline-flex items-center gap-2 pt-6 font-semibold text-brand-800">{p.cta} <Icon name="ArrowUpRight" class="size-4 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5" /></span>
         </a>
       ))}
+    </div>
+
+    <!-- X header download -->
+    <div class="mt-12 overflow-hidden rounded-3xl border-4 border-ink bg-white shadow-[8px_8px_0_#0b1a10]" data-reveal>
+      <img src="/x-banner.png" alt="$REFERRAL × Pump.fun X header featuring the Pump.fun, alon and json referral posts" width="1500" height="500" loading="lazy" decoding="async" class="block w-full" />
+      <div class="flex flex-col items-start gap-4 border-t-4 border-ink p-5 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div class="font-display text-xl font-bold">Rep the code on your profile</div>
+          <p class="text-sm text-gray-600">1500×500 X header. Download it, set it as your banner, become a walking referral link.</p>
+        </div>
+        <a href="/x-banner.png" download="referral-x-header.png" data-banner-dl class="btn-primary shrink-0"><Icon name="Download" class="size-5" /> Download header</a>
+      </div>
     </div>
 
     <p class="mt-6 text-xs text-gray-500">Posts shown for context and link to the originals on X. $REFERRAL is a community token and is not affiliated with Pump.fun.</p>
   </div>
 </section>
+
+<script>
+  import { confetti } from '../lib/fun';
+  document.querySelector('[data-banner-dl]')?.addEventListener('click', (e) => confetti(e.currentTarget as Element));
+</script>

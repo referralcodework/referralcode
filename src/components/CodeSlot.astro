@@ -1,0 +1,121 @@
+---
+import Icon from './Icon.astro';
+---
+<section id="spin" class="section relative overflow-hidden bg-gradient-to-br from-brand-700 via-brand-800 to-brand-900 text-white">
+  <div class="bg-grid absolute inset-0 opacity-30"></div>
+  <div class="container-x relative grid items-center gap-12 lg:grid-cols-[1fr_1.1fr]">
+    <div data-reveal>
+      <span class="eyebrow bg-white/15 text-lime-200"><Icon name="Dices" class="size-3.5" /> Just for fun</span>
+      <h2 class="h-section mt-4">Spin for your referral code.</h2>
+      <p class="lede text-brand-100">Every degen needs a code. Pull the lever, get a one-of-a-kind (ok, one-of-a-few-hundred) code, and post it like it's worth $50. It isn't. It's worth more: vibes.</p>
+      <p class="mt-6 text-sm text-brand-200">Codes are made up for the meme. No real rewards, no wallet, nothing to claim.</p>
+    </div>
+
+    <div class="mx-auto w-full max-w-lg" data-reveal>
+      <div class="rounded-[2rem] border-4 border-ink bg-lime-300 p-4 text-ink shadow-[10px_10px_0_#0b1a10] sm:p-6">
+        <div class="flex items-center justify-between font-display text-sm font-bold uppercase tracking-widest">
+          <span>Code-o-matic 3000</span>
+          <span class="flex gap-1.5" aria-hidden="true"><span class="slot-light size-3 rounded-full bg-red-500"></span><span class="slot-light size-3 rounded-full bg-yellow-400 [animation-delay:.2s]"></span><span class="slot-light size-3 rounded-full bg-brand-500 [animation-delay:.4s]"></span></span>
+        </div>
+
+        <div class="mt-4 grid grid-cols-3 gap-2 rounded-2xl border-4 border-ink bg-white p-2 sm:gap-3 sm:p-3" aria-live="polite" aria-atomic="true">
+          {[0, 1, 2].map((i) => (
+            <div class="grid h-24 place-items-center overflow-hidden rounded-xl bg-gray-100 text-center sm:h-28">
+              <div data-reel={i} class="px-1 leading-tight">
+                <div data-emoji class="text-3xl sm:text-4xl">{['🤝', '💊', '💸'][i]}</div>
+                <div data-word class="mt-1 font-display text-sm font-bold sm:text-lg">{['USE', 'MY', 'CODE'][i]}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div class="mt-4 min-h-[4.5rem] rounded-2xl bg-ink px-4 py-3 text-center">
+          <div class="text-[11px] font-semibold uppercase tracking-widest text-brand-300">Your code</div>
+          <div data-code class="font-mono text-xl font-bold tracking-wider text-lime-300 sm:text-2xl">PULL THE LEVER</div>
+          <div data-prize class="mt-0.5 text-sm text-brand-100"></div>
+        </div>
+
+        <div class="mt-4 grid gap-2 sm:grid-cols-[1.3fr_1fr_1fr]">
+          <button type="button" data-spin class="btn min-h-14 border-4 border-ink bg-ink text-lg text-lime-300 shadow-[4px_4px_0_#15803d] hover:-translate-y-0.5"><Icon name="Dices" class="size-5" /> Spin</button>
+          <button type="button" data-copy disabled class="btn border-4 border-ink bg-white"><Icon name="Copy" class="size-4" /> Copy</button>
+          <a data-post aria-disabled="true" href="#spin" target="_blank" rel="noopener noreferrer" class="btn pointer-events-none border-4 border-ink bg-white opacity-60"><Icon name="x" class="size-4" /> Post</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .slot-light { animation: blink 1.2s steps(2, jump-none) infinite; }
+  @keyframes blink { 50% { opacity: .25; } }
+  .spinning { filter: blur(1.5px); transform: translateY(2px); }
+  @media (prefers-reduced-motion: reduce) { .slot-light { animation: none; } }
+</style>
+
+<script>
+  import { confetti } from '../lib/fun';
+  import { copyText, toast, xIntent } from '../lib/ui';
+  import { SITE, TOKEN } from '../config';
+
+  const REELS: [string, string][][] = [
+    [['🐸', 'PEPE'], ['🦍', 'APE'], ['🗿', 'GIGA'], ['🧠', 'BASED'], ['🐋', 'WHALE'], ['🤡', 'CLOWN'], ['🦅', 'EAGLE'], ['🔥', 'HOT']],
+    [['💊', 'PILL'], ['🎟️', 'TICKET'], ['🚀', 'MOON'], ['💎', 'HANDS'], ['🤝', 'REF'], ['🧪', 'LAB'], ['👑', 'KING'], ['📈', 'PUMP']],
+    [['💸', '50'], ['⚡', '4X'], ['🎰', '777'], ['💯', '100'], ['🍀', '1444'], ['🟢', '420'], ['🤑', '10M'], ['🫡', '1']],
+  ];
+  const PRIZES = [
+    '+$50 deposit match (in spirit)',
+    '4x boost on your aura',
+    'One (1) new cult member',
+    '10% off your bad decisions',
+    'Free bragging rights, forever',
+    'A referrer is born',
+    'Retention: guaranteed (by vibes)',
+  ];
+
+  const reels = [...document.querySelectorAll<HTMLElement>('[data-reel]')];
+  const codeEl = document.querySelector<HTMLElement>('[data-code]')!;
+  const prizeEl = document.querySelector<HTMLElement>('[data-prize]')!;
+  const spinBtn = document.querySelector<HTMLButtonElement>('[data-spin]')!;
+  const copyBtn = document.querySelector<HTMLButtonElement>('[data-copy]')!;
+  const postA = document.querySelector<HTMLAnchorElement>('[data-post]')!;
+  const pick = <T,>(a: T[]) => a[Math.floor(Math.random() * a.length)];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let code = '';
+
+  const show = (reel: HTMLElement, [emoji, word]: [string, string]) => {
+    reel.querySelector('[data-emoji]')!.textContent = emoji;
+    reel.querySelector('[data-word]')!.textContent = word;
+  };
+
+  spinBtn.addEventListener('click', async () => {
+    spinBtn.disabled = true;
+    codeEl.textContent = 'SPINNING…';
+    prizeEl.textContent = '';
+    const result = REELS.map((r) => pick(r));
+    // Rigged a little in your favour: ~1 in 6 spins hits the jackpot.
+    const jackpot = Math.random() < 1 / 6;
+    if (jackpot) { result[0] = ['🤝', 'REFERRAL']; result[1] = ['💊', 'CODE']; result[2] = ['🎰', '777']; }
+
+    await Promise.all(reels.map((reel, i) => new Promise<void>((done) => {
+      if (reduce) { show(reel, result[i]); return done(); }
+      reel.classList.add('spinning');
+      const t = setInterval(() => show(reel, pick(REELS[i])), 70);
+      setTimeout(() => { clearInterval(t); reel.classList.remove('spinning'); show(reel, result[i]); done(); }, 700 + i * 450);
+    })));
+
+    code = result.map(([, w]) => w).join('-');
+    codeEl.textContent = code;
+    prizeEl.textContent = jackpot ? '🎰 JACKPOT! You are the referral code now.' : `You won: ${pick(PRIZES)}`;
+    confetti(codeEl, jackpot ? 70 : 26);
+    copyBtn.disabled = false;
+    postA.href = xIntent(`My ${TOKEN.ticker} referral code just dropped: ${code} 🎰\n\nAll you need is one referral code. Spin yours 👇`, `${SITE.url}/#spin`);
+    postA.removeAttribute('aria-disabled');
+    postA.classList.remove('pointer-events-none', 'opacity-60');
+    spinBtn.disabled = false;
+  });
+
+  copyBtn.addEventListener('click', async () => {
+    const ok = await copyText(code);
+    toast(ok ? `Copied ${code}. Use it wisely.` : 'Copy failed', ok ? 'ok' : 'error');
+  });
+</script>
